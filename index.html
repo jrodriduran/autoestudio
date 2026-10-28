@@ -1,0 +1,3297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StudyBoard 2027 | Plataforma de certificación</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-800-normal.min.css" />
+<style>
+:root{
+  --radius-sm:12px;
+  --radius:18px;
+  --radius-lg:26px;
+}
+
+body[data-theme="dark"]{
+  --bg:#06101a;
+  --panel:rgba(13,27,42,.72);
+  --panel-solid:#0b1826;
+  --border:rgba(255,255,255,.09);
+  --text:#e9f2f8;
+  --muted:#94a9bb;
+  --input-bg:rgba(255,255,255,.05);
+  --ring-track:rgba(255,255,255,.08);
+  --accent:#4ee1c1;
+  --blue:#6aa9ff;
+  --success:#43d17c;
+  --danger:#ff8080;
+  --warning:#ffb454;
+  --on-accent:#04121b;
+  --shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+body[data-theme="light"]{
+  --bg:#f4f8fb;
+  --panel:rgba(255,255,255,.78);
+  --panel-solid:#ffffff;
+  --border:rgba(16,51,79,.10);
+  --text:#102436;
+  --muted:#5d7386;
+  --input-bg:#ffffff;
+  --ring-track:rgba(16,51,79,.10);
+  --accent:#0f9b8e;
+  --blue:#2f6fd0;
+  --success:#2f9e63;
+  --danger:#d05a5a;
+  --warning:#c77b30;
+  --on-accent:#ffffff;
+  --shadow:0 18px 50px rgba(16,51,79,.10);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.45;
+  overflow-x:hidden;
+  transition:background .3s,color .3s;
+}
+h1,h2,h3,h4{margin:0;line-height:1.15}
+p{margin:0}
+button,input,select,textarea{font:inherit}
+a{color:inherit}
+.small{font-size:.82rem}
+.muted{color:var(--muted)}
+.hidden{display:none !important}
+
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
+.orb{position:absolute;width:420px;height:420px;border-radius:50%;filter:blur(90px);opacity:.22;animation:float 18s ease-in-out infinite}
+.orb1{background:var(--accent);top:-80px;left:-80px}
+.orb2{background:var(--blue);bottom:-100px;right:-60px;animation-delay:-6s}
+.orb3{background:#c084fc;top:40%;left:55%;width:280px;height:280px;opacity:.12;animation-delay:-12s}
+body[data-theme="light"] .orb{opacity:.16}
+@keyframes float{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(30px,-30px,0) scale(1.08)}
+}
+
+.app{display:grid;grid-template-columns:290px 1fr;min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;overflow:auto;z-index:30;
+  padding:24px 18px;display:flex;flex-direction:column;gap:18px;
+  background:var(--panel);border-right:1px solid var(--border);backdrop-filter:blur(20px)
+}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{
+  width:46px;height:46px;border-radius:16px;display:grid;place-items:center;
+  font-weight:800;color:var(--on-accent);background:linear-gradient(135deg,var(--accent),var(--blue))
+}
+.brand strong{display:block;font-size:1.05rem}
+.brand small{color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:8px}
+.nav-item{
+  width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border:1px solid transparent;border-radius:14px;background:transparent;color:var(--muted);
+  cursor:pointer;text-align:left;transition:.2s
+}
+.nav-item:hover{color:var(--text);background:var(--input-bg);transform:translateX(2px)}
+.nav-item.active{
+  color:var(--text);border-color:rgba(78,225,193,.22);
+  background:linear-gradient(90deg,rgba(78,225,193,.14),rgba(106,169,255,.08))
+}
+.sidebar-plan{padding:16px}
+.sidebar-mini{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:.82rem}
+.sidebar-actions{margin-top:auto;display:grid;gap:8px}
+main{padding:24px 28px 80px;min-width:0}
+.topbar{
+  position:sticky;top:12px;z-index:25;display:flex;justify-content:space-between;
+  gap:18px;align-items:center;padding:14px 20px;margin-bottom:22px;border-radius:24px
+}
+.topbar-left{display:flex;gap:12px;align-items:center;min-width:0}
+.topbar h1{font-size:1.45rem;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#plan-selector{min-width:220px;width:auto}
+
+.breadcrumb{display:flex;gap:6px;align-items:center;font-size:.8rem;color:var(--muted);margin-bottom:4px;flex-wrap:wrap}
+.crumb{background:none;border:none;color:var(--muted);cursor:pointer;padding:0;font-size:.8rem;font-weight:600}
+.crumb:hover{color:var(--accent)}
+.crumb.current{color:var(--text)}
+.crumb-sep{opacity:.5}
+
+.view{display:none}
+.view.active{display:block}
+.page-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.page-head h2{font-size:1.35rem}
+
+.glass{
+  background:var(--panel);border:1px solid var(--border);
+  backdrop-filter:blur(18px);box-shadow:var(--shadow);border-radius:var(--radius-lg)
+}
+.card{padding:22px}
+.card h3{margin-bottom:6px}
+.empty{text-align:center;padding:34px;color:var(--muted)}
+.stack{display:grid;gap:18px}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.row-actions.compact .btn{padding:8px 10px;font-size:.82rem}
+
+.btn{
+  border:1px solid transparent;border-radius:14px;padding:10px 14px;font-weight:650;
+  cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px;
+  color:var(--text);background:var(--input-bg);text-decoration:none
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-sm{padding:8px 10px;font-size:.82rem;border-radius:12px}
+.btn-accent{
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  color:var(--on-accent);border:none;box-shadow:0 12px 28px rgba(78,225,193,.16)
+}
+.btn-soft{background:rgba(78,225,193,.12);color:var(--accent);border-color:rgba(78,225,193,.22)}
+.btn-ghost{background:var(--input-bg);border-color:var(--border);color:var(--text)}
+.btn-danger{background:rgba(255,128,128,.12);color:var(--danger);border-color:rgba(255,128,128,.2)}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--muted);cursor:pointer;flex:none
+}
+.icon-btn:hover{color:var(--text);border-color:var(--accent)}
+
+.progress{height:10px;background:var(--ring-track);border-radius:999px;overflow:hidden}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--blue));border-radius:999px}
+.progress-meta{display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:var(--muted);font-size:.88rem}
+
+.badge{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;
+  font-size:.75rem;font-weight:700;background:var(--input-bg);border:1px solid var(--border);color:var(--muted)
+}
+.badge-success{color:var(--success);border-color:rgba(67,209,124,.25);background:rgba(67,209,124,.12)}
+.badge-danger{color:var(--danger);border-color:rgba(255,128,128,.25);background:rgba(255,128,128,.12)}
+.badge-warning{color:var(--warning);border-color:rgba(255,180,84,.25);background:rgba(255,180,84,.12)}
+
+.banner{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  padding:14px 16px;border-radius:16px;margin-bottom:16px;flex-wrap:wrap
+}
+.banner .row-actions{margin:0}
+.banner.archive{background:rgba(255,180,84,.12);border:1px solid rgba(255,180,84,.25)}
+.banner.success{background:rgba(67,209,124,.12);border:1px solid rgba(67,209,124,.25)}
+
+.archive-strip{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:14px 20px;margin-bottom:18px;flex-wrap:wrap
+}
+
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+.plan-card{padding:22px;position:relative;overflow:hidden;transition:.25s}
+.plan-card:hover{transform:translateY(-5px);border-color:rgba(78,225,193,.28)}
+.plan-card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.14;
+  background:radial-gradient(circle at top right,var(--accent),transparent 62%)
+}
+.plan-card-head{display:flex;gap:14px;align-items:center;position:relative;z-index:1}
+.plan-avatar{
+  width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-weight:800;
+  color:var(--on-accent);background:linear-gradient(135deg,var(--accent),var(--blue));flex:none
+}
+.plan-meta{flex:1;min-width:0}
+.plan-meta h3{font-size:1.08rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-meta p{color:var(--muted);font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ring{
+  width:72px;height:72px;border-radius:50%;display:grid;place-items:center;flex:none;position:relative;
+  background:conic-gradient(var(--accent) calc(var(--percent) * 1%), var(--ring-track) 0)
+}
+.ring::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--panel-solid)}
+.ring strong{position:relative;z-index:1;font-size:.95rem}
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0;position:relative;z-index:1}
+.mini-stats span{
+  background:var(--input-bg);border:1px solid var(--border);border-radius:16px;
+  padding:10px;text-align:center;font-size:.75rem;color:var(--muted)
+}
+.mini-stats strong{display:block;font-size:1.05rem;color:var(--text)}
+.next-box{
+  display:grid;gap:4px;padding:12px;border-radius:16px;background:var(--input-bg);
+  border:1px solid var(--border);margin-bottom:14px;position:relative;z-index:1
+}
+.quick-material{margin-bottom:14px;position:relative;z-index:1}
+.quick-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.quick-link{
+  border:1px solid var(--border);background:var(--input-bg);color:var(--text);
+  padding:8px 10px;border-radius:999px;cursor:pointer;font-size:.8rem;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.quick-link:hover{border-color:var(--accent)}
+.plan-actions{display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1}
+.create-plan{
+  min-height:260px;display:grid;place-items:center;text-align:center;color:var(--muted);
+  cursor:pointer;border-style:dashed;background:transparent
+}
+.create-plan:hover{color:var(--text);border-color:var(--accent)}
+.plan-hero{padding:24px;margin-bottom:18px;position:relative;overflow:hidden}
+.plan-hero-grid{display:grid;grid-template-columns:1.4fr .6fr;gap:20px;align-items:center}
+.dash-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.mini-list{display:grid;gap:10px;margin-top:12px}
+.mini-list-item{
+  display:flex;justify-content:space-between;gap:10px;align-items:center;
+  padding:10px 12px;border-radius:12px;background:var(--input-bg);border:1px solid var(--border)
+}
+.module-progress-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.module-progress-row:last-child{border-bottom:0}
+.module-progress-row .progress{width:140px}
+
+.section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
+.chapter{border:1px solid var(--border);background:var(--input-bg);border-radius:20px;padding:16px;margin-top:14px}
+.chapter.done{border-color:rgba(67,209,124,.28)}
+.chapter-head{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.check{display:flex;gap:12px;align-items:center;cursor:pointer;min-width:220px;flex:1}
+.check h4{font-size:1rem}
+.check small{color:var(--muted)}
+.subtopics{margin-top:14px;display:grid;gap:10px}
+.subtopic{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  padding:12px 14px;border-radius:16px;background:var(--panel);border:1px solid var(--border)
+}
+.subtopic.done{border-color:rgba(67,209,124,.25);background:rgba(67,209,124,.07)}
+.subtopic label{display:flex;gap:10px;align-items:center;cursor:pointer;font-weight:500}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--accent);width:auto}
+
+.filters-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.filters-bar input[type="search"]{flex:1;min-width:220px}
+.filters-bar select{width:auto;min-width:160px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab{
+  padding:9px 13px;border-radius:999px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--muted);cursor:pointer;font-weight:600;font-size:.86rem
+}
+.tab.active{color:var(--accent);border-color:rgba(78,225,193,.3);background:rgba(78,225,193,.12)}
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.resource-card{padding:18px;display:flex;flex-direction:column;gap:10px}
+.resource-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.type-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;
+  font-size:.75rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg)
+}
+.type-badge.youtube{color:var(--danger);background:rgba(255,128,128,.1);border-color:rgba(255,128,128,.22)}
+.type-badge.pdf{color:var(--blue);background:rgba(106,169,255,.1);border-color:rgba(106,169,255,.22)}
+.type-badge.web{color:var(--accent);background:rgba(78,225,193,.1);border-color:rgba(78,225,193,.22)}
+.resource-url{color:var(--blue);text-decoration:none;font-size:.86rem;word-break:break-all}
+.resource-url:hover{text-decoration:underline}
+.resource-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap}
+.resource-row{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  padding:14px;border-radius:18px;flex-wrap:wrap
+}
+
+.notice{
+  padding:13px 14px;border-radius:16px;background:rgba(106,169,255,.1);
+  border:1px solid rgba(106,169,255,.18);margin-bottom:16px
+}
+.notice.warning{background:rgba(255,180,84,.1);border-color:rgba(255,180,84,.2)}
+.notice summary{cursor:pointer;font-weight:700}
+pre.context{
+  white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.8rem;background:var(--input-bg);padding:12px;border-radius:12px;
+  border:1px solid var(--border);margin-top:10px;color:var(--text)
+}
+.language-group{margin-bottom:18px}
+.language-group-head{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.resource-group{border:1px solid var(--border);border-radius:18px;padding:16px;background:var(--input-bg);margin-bottom:14px}
+.link-list{display:grid;gap:10px;margin-top:10px}
+.resource-link{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;text-decoration:none;
+  padding:12px;border-radius:14px;border:1px solid var(--border);background:var(--panel)
+}
+.resource-link:hover{border-color:var(--accent)}
+.table-wrap{overflow:auto;border-radius:18px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:13px;border-bottom:1px solid var(--border);text-align:left;font-size:.92rem}
+th{background:var(--input-bg);color:var(--muted)}
+tr:last-child td{border-bottom:0}
+
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.field{display:grid;gap:7px}
+.field.full{grid-column:1/-1}
+label{font-size:.86rem;font-weight:650;color:var(--muted)}
+input,select,textarea{
+  width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text)
+}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(78,225,193,.25);border-color:var(--accent)}
+.checkbox-field{display:flex;align-items:center;gap:10px}
+.checkbox-field input{width:auto}
+.checkbox-field label{margin:0}
+
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{position:relative}
+.pill input{position:absolute;opacity:0;pointer-events:none}
+.pill span{
+  display:inline-flex;padding:10px 14px;border-radius:999px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--muted);cursor:pointer;font-weight:650
+}
+.pill input:checked + span{background:rgba(78,225,193,.16);border-color:var(--accent);color:var(--accent)}
+.color-pill{position:relative;display:inline-block}
+.color-pill input{position:absolute;opacity:0;pointer-events:none}
+.color-pill span{
+  width:38px;height:38px;border-radius:50%;display:block;border:2px solid transparent;
+  cursor:pointer;transition:.2s
+}
+.color-pill input:checked + span{border-color:var(--text);transform:scale(1.1)}
+.gen-log{list-style:none;padding:0;margin:16px 0;display:grid;gap:10px}
+.gen-log li{
+  display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;
+  border:1px solid var(--border);background:var(--input-bg);color:var(--muted);opacity:.55;transition:.3s
+}
+.gen-log li.active{opacity:1;border-color:rgba(106,169,255,.35);color:var(--text)}
+.gen-log li.done{opacity:1;border-color:rgba(67,209,124,.3);color:var(--text)}
+.gen-check{
+  width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  background:var(--ring-track);font-size:.8rem;flex:none
+}
+.gen-log li.done .gen-check{background:var(--success);color:#04121b}
+.gen-log li.active .gen-check{background:rgba(106,169,255,.2);color:var(--blue)}
+.spinner{width:14px;height:14px;border:2px solid var(--blue);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.preview-module{border:1px solid var(--border);border-radius:14px;padding:12px 14px;background:var(--input-bg);margin-bottom:8px}
+.preview-module-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(3,10,18,.62);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;padding:20px;z-index:100
+}
+.modal-overlay.open{display:flex}
+.modal{
+  width:min(1080px,100%);max-height:90vh;overflow:auto;background:var(--panel-solid);
+  border:1px solid var(--border);border-radius:30px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.35)
+}
+.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap}
+.question-card{border:1px solid var(--border);border-radius:16px;padding:16px;background:var(--input-bg);margin-bottom:12px}
+.option{
+  display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;
+  border:1px solid var(--border);margin-top:8px;cursor:pointer;background:var(--panel)
+}
+.option:hover{border-color:var(--accent)}
+.result-hero{text-align:center;padding:24px;border-radius:22px;margin-bottom:18px;background:var(--input-bg);border:1px solid var(--border)}
+.result-hero.pass{background:rgba(67,209,124,.12);border-color:rgba(67,209,124,.25)}
+.result-hero.fail{background:rgba(255,128,128,.12);border-color:rgba(255,128,128,.25)}
+.result-hero strong{display:block;font-size:3rem}
+.review-card{border:1px solid var(--border);border-left:5px solid var(--muted);border-radius:16px;padding:14px;background:var(--input-bg);margin-bottom:12px}
+.review-card.correct{border-left-color:var(--success);background:rgba(67,209,124,.08)}
+.review-card.incorrect{border-left-color:var(--danger);background:rgba(255,128,128,.08)}
+
+.toast{
+  position:fixed;bottom:24px;right:24px;padding:14px 18px;border-radius:18px;max-width:340px;
+  background:var(--panel-solid);border:1px solid var(--border);color:var(--text);
+  box-shadow:var(--shadow);opacity:0;transform:translateY(14px);transition:.25s;z-index:200;pointer-events:none
+}
+.toast.show{opacity:1;transform:translateY(0)}
+
+body.focus .sidebar{display:none}
+body.focus .app{grid-template-columns:1fr}
+
+@media(max-width:1000px){
+  .dash-grid{grid-template-columns:1fr}
+}
+@media(max-width:980px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto}
+  .topbar{position:relative;top:0}
+  .plan-hero-grid{grid-template-columns:1fr}
+  .mini-stats{grid-template-columns:repeat(2,1fr)}
+  main{padding:18px 16px 60px}
+}
+</style>
+<body data-theme="dark">
+
+<div class="bg">
+  <span class="orb orb1"></span>
+  <span class="orb orb2"></span>
+  <span class="orb orb3"></span>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SB</div>
+      <div>
+        <strong>StudyBoard</strong>
+        <small>2027 Learning OS</small>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard">🗂️ Dashboard</button>
+      <button class="nav-item" data-view="planDash">📊 Panel del plan</button>
+      <button class="nav-item" data-view="plan">📚 Plan de estudio</button>
+      <button class="nav-item" data-view="material">🔗 Material</button>
+      <button class="nav-item" data-view="exams">📝 Exámenes</button>
+      <button class="nav-item" data-view="archive">📦 Archivo</button>
+      <button class="nav-item" data-view="settings">⚙️ Ajustes</button>
+    </nav>
+
+    <div class="glass sidebar-plan" id="sidebar-plan"></div>
+
+    <div class="sidebar-actions">
+      <button class="btn btn-accent" data-action="create-plan">✨ Crear plan de estudio</button>
+      <button class="btn btn-ghost" data-action="toggle-theme">🌗 Tema</button>
+      <button class="btn btn-ghost" data-action="focus-mode">🎯 Modo concentración</button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar glass">
+      <div class="topbar-left">
+        <button class="icon-btn" id="back-btn" data-action="go-back" title="Volver">←</button>
+        <div style="min-width:0">
+          <div id="breadcrumb" class="breadcrumb"></div>
+          <h1 id="top-title">Dashboard</h1>
+          <p id="top-subtitle" class="muted small"></p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <select id="plan-selector" aria-label="Plan seleccionado"></select>
+        <button class="btn btn-ghost btn-sm" data-action="show-context" title="Ver contexto (nombre exacto, descripción y detalles)">🧠 Contexto</button>
+        <button class="btn btn-ghost btn-sm" data-action="add-resource" data-scope="plan:">+ Material</button>
+        <button class="btn btn-ghost btn-sm" data-action="google-search">Buscar Google</button>
+      </div>
+    </header>
+
+    <section id="dashboard" class="view active">
+      <div class="page-head">
+        <div>
+          <h2>Dashboard de planes</h2>
+          <p class="muted">Cada plan usa su nombre exacto, descripción y detalles como entrada para el contenido, los exámenes y las búsquedas.</p>
+        </div>
+        <button class="btn btn-accent" data-action="create-plan">+ Nuevo plan</button>
+      </div>
+      <div class="glass archive-strip" id="archive-strip"></div>
+      <div class="plans-grid" id="plans-grid"></div>
+    </section>
+    <section id="planDash" class="view">
+      <div id="plandash-container"></div>
+    </section>
+
+    <section id="plan" class="view">
+      <div id="plan-banner"></div>
+      <div id="plan-header"></div>
+      <div id="modules-container" class="stack"></div>
+    </section>
+
+    <section id="material" class="view">
+      <div id="material-banner"></div>
+      <div class="page-head">
+        <div>
+          <h2>Material del plan</h2>
+          <p class="muted">YouTube, webs, PDFs y material general organizado por capítulo o subsección.</p>
+        </div>
+        <div class="row-actions">
+          <button class="btn btn-ghost" data-action="google-search">Buscar en Google</button>
+          <button class="btn btn-accent" data-action="add-resource" data-scope="plan:">+ Agregar material</button>
+        </div>
+      </div>
+
+      <div class="notice">
+        Los enlaces se abren en una pestaña nueva. Las búsquedas usan el contexto del plan (nombre exacto + descripción + detalles) para traer material más preciso.
+      </div>
+
+      <div class="filters-bar">
+        <input id="material-search" type="search" placeholder="Buscar por título, URL, tag o sección..." />
+        <select id="material-type">
+          <option value="all">Todo el material</option>
+          <option value="youtube">YouTube</option>
+          <option value="pdf">PDF</option>
+          <option value="web">Web</option>
+          <option value="video">Otro video</option>
+          <option value="other">Otro</option>
+        </select>
+      </div>
+
+      <div class="tabs" id="material-tabs">
+        <button class="tab active" data-filter-tab="all">Todos</button>
+        <button class="tab" data-filter-tab="plan">General</button>
+        <button class="tab" data-filter-tab="module">Módulos</button>
+        <button class="tab" data-filter-tab="topic">Capítulos</button>
+        <button class="tab" data-filter-tab="subtopic">Subsecciones</button>
+        <button class="tab" data-filter-tab="favorites">Favoritos</button>
+      </div>
+
+      <div id="material-list"></div>
+    </section>
+    <section id="exams" class="view">
+      <div id="exams-banner"></div>
+      <div class="page-head">
+        <div>
+          <h2>Exámenes</h2>
+          <p class="muted">Historial del plan seleccionado.</p>
+        </div>
+        <button class="btn btn-accent" data-action="exam" data-scope="plan">Examen general</button>
+      </div>
+      <div id="exam-history"></div>
+    </section>
+
+    <section id="archive" class="view">
+      <div class="page-head">
+        <div>
+          <h2>Archivo de planes</h2>
+          <p class="muted">Planes completados o archivados. Puedes consultarlos, restaurarlos o eliminarlos.</p>
+        </div>
+        <button class="btn btn-ghost" data-view="dashboard">← Volver al dashboard</button>
+      </div>
+      <div class="plans-grid" id="archive-grid"></div>
+    </section>
+    <section id="settings" class="view">
+      <div class="page-head">
+        <div>
+          <h2>Ajustes</h2>
+          <p class="muted">Interfaz, idiomas, búsqueda, proveedor de IA y exámenes.</p>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="glass card">
+          <h3>Apariencia</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="theme">Tema</label>
+              <select id="theme">
+                <option value="dark">Oscuro concentración</option>
+                <option value="light">Claro educativo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass card">
+          <h3>Proveedor de IA</h3>
+          <p class="muted small">La IA recibe como entrada el nombre exacto, la descripción y los detalles de cada plan para generar contenido, exámenes y búsquedas.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="ai-provider">Proveedor</label>
+              <select id="ai-provider">
+                <option value="none">Sin IA</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="groq">Groq</option>
+                <option value="azure">Azure OpenAI</option>
+                <option value="openrouter">OpenRouter</option>
+                <option value="ollama">Ollama / Local</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ai-model">Modelo</label>
+              <input id="ai-model" type="text" placeholder="gpt-4o" />
+            </div>
+            <div class="field">
+              <label for="ai-api-key">API Key</label>
+              <input id="ai-api-key" type="password" placeholder="No se guarda en el prototipo" />
+            </div>
+            <div class="field">
+              <label for="ai-base-url">Base URL</label>
+              <input id="ai-base-url" type="text" placeholder="Opcional" />
+            </div>
+          </div>
+          <div class="row-actions" style="margin-top:14px">
+            <button class="btn btn-soft" data-action="test-ai">Probar conexión</button>
+          </div>
+        </div>
+        <div class="glass card">
+          <h3>Búsqueda con Google</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="search-provider">Método</label>
+              <select id="search-provider">
+                <option value="google-links">Google directo (sin API)</option>
+                <option value="google-cse">Google Custom Search JSON API</option>
+                <option value="serpapi">SerpApi (Google)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="google-cse-fields" class="form-grid" style="display:none">
+            <div class="field">
+              <label for="google-cse-key">Google API Key</label>
+              <input id="google-cse-key" type="password" />
+            </div>
+            <div class="field">
+              <label for="google-cse-id">Search Engine ID</label>
+              <input id="google-cse-id" type="text" />
+            </div>
+          </div>
+
+          <div id="serpapi-fields" class="form-grid" style="display:none">
+            <div class="field">
+              <label for="serpapi-key">SerpApi Key</label>
+              <input id="serpapi-key" type="password" />
+            </div>
+          </div>
+
+          <div class="notice" id="search-provider-notice" style="margin-top:14px"></div>
+        </div>
+
+        <div class="glass card">
+          <h3>Idiomas</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="ui-language">Idioma de interfaz</label>
+              <select id="ui-language">
+                <option value="es">Español</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="content-primary">Contenido principal</label>
+              <select id="content-primary">
+                <option value="es">Español</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="content-secondary">Contenido secundario</label>
+              <select id="content-secondary">
+                <option value="none">Ninguno</option>
+                <option value="es">Español</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="exam-language-mode">Idioma de exámenes</label>
+              <select id="exam-language-mode">
+                <option value="ui">Seguir interfaz</option>
+                <option value="content">Seguir contenido principal</option>
+              </select>
+            </div>
+          </div>
+          <div class="notice" id="language-summary" style="margin-top:14px"></div>
+        </div>
+
+        <div class="glass card">
+          <h3>Exámenes</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="subsection-questions">Subsección</label>
+              <select id="subsection-questions">
+                <option value="10">10 preguntas</option>
+                <option value="12">12 preguntas</option>
+                <option value="15">15 preguntas</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="chapter-questions">Capítulo</label>
+              <select id="chapter-questions">
+                <option value="20">20 preguntas</option>
+                <option value="25">25 preguntas</option>
+                <option value="30">30 preguntas</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="plan-questions">Plan general</label>
+              <select id="plan-questions">
+                <option value="30">30 preguntas</option>
+                <option value="40">40 preguntas</option>
+                <option value="50">50 preguntas</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="pass-score">Aprobación (%)</label>
+              <input id="pass-score" type="number" min="50" max="100" />
+            </div>
+            <div class="field checkbox-field">
+              <input id="auto-offer" type="checkbox" />
+              <label for="auto-offer">Ofrecer examen al completar</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-actions" style="margin-top:18px">
+        <button class="btn btn-accent" data-action="save-settings">Guardar ajustes</button>
+        <button class="btn btn-ghost" data-action="reset-settings">Restablecer</button>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'studyboard-2027-v3';
+
+const defaultSettings = {
+  theme: 'dark',
+  uiLanguage: 'es',
+  contentPrimary: 'es',
+  contentSecondary: 'en',
+  searchProvider: 'google-links',
+  googleCseKey: '',
+  googleCseId: '',
+  serpApiKey: '',
+  aiProvider: 'openai',
+  aiModel: 'gpt-4o',
+  aiApiKey: '',
+  aiBaseUrl: '',
+  subsectionQuestions: 10,
+  chapterQuestions: 20,
+  planQuestions: 30,
+  passScore: 70,
+  autoOfferExam: true,
+  examLanguageMode: 'ui'
+};
+
+/* ================= CONTEXTO DEL PLAN (INPUT PARA IA / BÚSQUEDAS) ================= */
+
+const STOPWORDS = new Set([
+  'de','la','el','los','las','un','una','unos','unas','y','o','u','para','por','con','en','del','al',
+  'que','se','es','son','ser','está','estan','esta','este','esto','como','sus','su','mi','me','te',
+  'más','mas','muy','sobre','entre','quiero','necesito','tema','examen','certificación','certificacion',
+  'the','of','and','or','to','for','with','in','on','at','a','an','is','are','be','will','this','that','it','its','my'
+]);
+
+function extractKeywords(text, max = 6) {
+  const words = String(text || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9áéíóúñü+#.\- ]/gi, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !STOPWORDS.has(w));
+
+  const unique = [];
+  words.forEach(w => { if (!unique.includes(w)) unique.push(w); });
+  return unique.slice(0, max);
+}
+
+function planContextText(plan) {
+  const parts = [];
+  parts.push(`Nombre exacto: ${plan.name}`);
+  if (plan.certification && plan.certification !== plan.name) parts.push(`Certificación: ${plan.certification}`);
+  if (plan.description) parts.push(`Descripción: ${plan.description}`);
+  if (plan.details) parts.push(`Detalles: ${plan.details}`);
+
+  const keywords = extractKeywords(`${plan.description || ''} ${plan.details || ''}`, 8);
+  if (keywords.length) parts.push(`Palabras clave: ${keywords.join(', ')}`);
+  if (plan.examDate) parts.push(`Fecha objetivo: ${plan.examDate}`);
+  if (plan.source) parts.push(`Fuente del temario: ${plan.source}`);
+
+  return parts.join('\n');
+}
+
+function planQuerySuffix(plan, max = 3) {
+  if (!plan) return '';
+  const keywords = extractKeywords(`${plan.description || ''} ${plan.details || ''}`, max);
+  return keywords.length ? ' ' + keywords.join(' ') : '';
+}
+
+function buildExamPrompt(plan, scope, title, count, lang) {
+  return `Eres un experto en creación de exámenes de certificación y evaluaciones educativas.
+
+CONTEXTO DEL PLAN DE ESTUDIO (úsalo como entrada principal):
+${planContextText(plan)}
+
+TAREA:
+Genera exactamente ${count} preguntas de práctica sobre: "${title}" (examen de ${EXAM_SCOPE_LABEL[scope] || scope}).
+
+REGLAS:
+1. Basa las preguntas en el nombre exacto, la descripción y los detalles del contexto anterior.
+2. No inventes temas fuera del contexto ni del alcance del examen.
+3. Opción múltiple con 4 opciones y una sola respuesta correcta.
+4. Incluye explicación de la respuesta correcta.
+5. Incluye dificultad (easy/medium/hard) y el subtema al que pertenece cada pregunta.
+6. Idioma de salida: ${langLabel(lang)}.
+7. Devuelve JSON válido.`;
+}
+
+function buildSearchPrompt(plan, topic) {
+  return `Busca material de autoestudio (PDFs públicos, videos y documentación oficial) para:
+Tema: ${topic}
+
+CONTEXTO DEL PLAN:
+${planContextText(plan)}
+
+Prioriza el idioma: ${langLabel(state.settings.contentPrimary)}. Idioma secundario válido: ${state.settings.contentSecondary === 'none' ? 'ninguno' : langLabel(state.settings.contentSecondary)}.`;
+}
+const EXAM_BLUEPRINTS = [
+  {
+    match: /aws.*(solutions\s*architect|saa)|saa-c0\d/i,
+    name: 'AWS Certified Solutions Architect – Associate',
+    source: 'Dominios oficiales AWS SAA-C03',
+    guideUrl: 'https://aws.amazon.com/certification/certified-solutions-architect-associate/',
+    modules: [
+      {
+        title: 'Dominio 1 · Diseñar arquitecturas seguras (30%)',
+        description: 'Accesos, protección de datos e infraestructura segura.',
+        topics: [
+          { title: 'Identidad y acceso (IAM)', subtopics: ['Usuarios, grupos y roles', 'Políticas de permisos', 'MFA y AWS STS', 'Principio de menor privilegio'] },
+          { title: 'Protección de datos', subtopics: ['Cifrado en reposo (KMS)', 'Cifrado en tránsito (TLS)', 'Gestión de secretos'] },
+          { title: 'Seguridad de infraestructura', subtopics: ['Security Groups vs NACLs', 'VPC segmentadas', 'CloudTrail y AWS Config'] }
+        ]
+      },
+      {
+        title: 'Dominio 2 · Diseñar arquitecturas resilientes (26%)',
+        description: 'Alta disponibilidad, desacople y recuperación ante desastres.',
+        topics: [
+          { title: 'Diseño distribuido', subtopics: ['Despliegues Multi-AZ', 'Desacople con SQS', 'Eventos con SNS / EventBridge'] },
+          { title: 'Alta disponibilidad', subtopics: ['Elastic Load Balancing', 'Auto Scaling', 'Health checks'] },
+          { title: 'Recuperación ante desastres', subtopics: ['Estrategias de backup', 'RPO y RTO', 'Planes de DR'] }
+        ]
+      },
+      {
+        title: 'Dominio 3 · Diseñar arquitecturas de alto rendimiento (24%)',
+        description: 'Cómputo, almacenamiento y redes.',
+        topics: [
+          { title: 'Cómputo', subtopics: ['Familias de instancias EC2', 'Contenedores (ECS)', 'Serverless (Lambda)'] },
+          { title: 'Almacenamiento', subtopics: ['Clases de S3', 'EBS y EFS', 'Ciclos de vida de datos'] },
+          { title: 'Redes', subtopics: ['Diseño de VPC y conectividad', 'Route 53', 'CloudFront (CDN)'] }
+        ]
+      },
+      {
+        title: 'Dominio 4 · Diseñar arquitecturas optimizadas en costos (20%)',
+        description: 'Modelos de precio y optimización.',
+        topics: [
+          { title: 'Modelos de costo', subtopics: ['On-Demand, Reserved y Spot', 'Savings Plans'] },
+          { title: 'Optimización', subtopics: ['S3 Lifecycle', 'Cost Explorer y Budgets', 'Rightsizing'] }
+        ]
+      }
+    ],
+    resources: [
+      { title: 'Página oficial de la certificación AWS', url: 'https://aws.amazon.com/certification/certified-solutions-architect-associate/', type: 'web', language: 'en', tags: ['oficial'], notes: 'Dominios y guía oficial del examen.', favorite: true },
+      { title: 'AWS Whitepapers (documentación)', url: 'https://aws.amazon.com/whitepapers/', type: 'web', language: 'en', tags: ['oficial', 'documentación'], notes: '' },
+      { title: 'Búsqueda: exam guide en PDF', url: 'https://www.google.com/search?q=aws+certified+solutions+architect+associate+exam+guide+filetype%3Apdf', type: 'pdf', language: 'en', tags: ['búsqueda'], notes: '' }
+    ]
+  },
+  {
+    match: /security\s*\+|sy0-70\d|comptia/i,
+    name: 'CompTIA Security+ (SY0-701)',
+    source: 'Dominios oficiales CompTIA Security+ SY0-701',
+    guideUrl: 'https://www.comptia.org/certifications/security',
+    modules: [
+      {
+        title: 'Dominio 1 · Conceptos generales de seguridad (12%)',
+        description: 'Fundamentos, gobernanza y gestión de riesgos.',
+        topics: [
+          { title: 'Fundamentos', subtopics: ['Tríada CIA', 'Zero Trust', 'Modelos de control'] },
+          { title: 'Gobernanza', subtopics: ['Políticas y estándares', 'Gestión de riesgos', 'Clasificación de datos'] }
+        ]
+      },
+      {
+        title: 'Dominio 2 · Amenazas, vulnerabilidades y mitigaciones (22%)',
+        description: 'Actores, vectores de ataque y mitigación.',
+        topics: [
+          { title: 'Actores y vectores', subtopics: ['Malware', 'Ingeniería social', 'Ataques a aplicaciones'] },
+          { title: 'Vulnerabilidades', subtopics: ['Vulnerabilidades de infraestructura', 'Escaneo y pentesting', 'Hardening'] }
+        ]
+      },
+      {
+        title: 'Dominio 3 · Arquitectura de seguridad (18%)',
+        description: 'Diseño seguro y criptografía.',
+        topics: [
+          { title: 'Arquitectura empresarial', subtopics: ['Diseño de red segura', 'Segmentación', 'Seguridad en la nube'] },
+          { title: 'Criptografía', subtopics: ['Simétrica y asimétrica', 'PKI y certificados', 'Hashing y firmas'] }
+        ]
+      },
+      {
+        title: 'Dominio 4 · Operaciones de seguridad (28%)',
+        description: 'Operaciones, monitoreo, respuesta y forense.',
+        topics: [
+          { title: 'Operaciones seguras', subtopics: ['Gestión de identidades y accesos', 'Automatización y orquestación'] },
+          { title: 'Monitoreo y respuesta', subtopics: ['SIEM y logs', 'Respuesta a incidentes', 'Forense digital'] }
+        ]
+      },
+      {
+        title: 'Dominio 5 · Gestión de programas de seguridad (14%)',
+        description: 'Terceros, cumplimiento y concienciación.',
+        topics: [
+          { title: 'Gestión de terceros', subtopics: ['Riesgo de proveedores', 'Evaluaciones'] },
+          { title: 'Cumplimiento', subtopics: ['Marcos regulatorios', 'Conscienciación y training'] }
+        ]
+      }
+    ],
+    resources: [
+      { title: 'Página oficial CompTIA Security+', url: 'https://www.comptia.org/certifications/security', type: 'web', language: 'en', tags: ['oficial'], notes: 'Objetivos oficiales del examen.', favorite: true },
+      { title: 'Búsqueda: objetivos SY0-701 (PDF)', url: 'https://www.google.com/search?q=comptia+security%2B+sy0-701+exam+objectives+filetype%3Apdf', type: 'pdf', language: 'en', tags: ['búsqueda'], notes: '' }
+    ]
+  },
+  {
+    match: /\bpmp\b|project\s*management\s*professional/i,
+    name: 'PMI — PMP',
+    source: 'PMP Examination Content Outline (ECO)',
+    guideUrl: 'https://www.pmi.org/certifications/project-management-pmp',
+    modules: [
+      {
+        title: 'Dominio 1 · Personas (42%)',
+        description: 'Gestión de equipos, liderazgo y stakeholders.',
+        topics: [
+          { title: 'Gestión del equipo', subtopics: ['Gestión de conflictos', 'Equipos virtuales', 'Mentoring y capacitación'] },
+          { title: 'Liderazgo', subtopics: ['Liderazgo servicial', 'Compromiso de interesados', 'Negociación'] }
+        ]
+      },
+      {
+        title: 'Dominio 2 · Procesos (50%)',
+        description: 'Metodología, ejecución, control y riesgos.',
+        topics: [
+          { title: 'Metodología', subtopics: ['Ciclo de vida predictivo', 'Ágil e híbrido', 'Planificación y ejecución'] },
+          { title: 'Alcance, cronograma y costos', subtopics: ['WBS y alcance', 'Cronograma y ruta crítica', 'Valor ganado (EVM)'] },
+          { title: 'Riesgos y calidad', subtopics: ['Análisis cualitativo y cuantitativo', 'Gestión de calidad', 'Adquisiciones'] }
+        ]
+      },
+      {
+        title: 'Dominio 3 · Entorno de negocio (8%)',
+        description: 'Cumplimiento, valor y cambio organizacional.',
+        topics: [
+          { title: 'Cumplimiento y valor', subtopics: ['Compliance organizacional', 'Realización de beneficios', 'Gestión del cambio'] }
+        ]
+      }
+    ],
+    resources: [
+      { title: 'PMI — Certificación PMP', url: 'https://www.pmi.org/certifications/project-management-pmp', type: 'web', language: 'en', tags: ['oficial'], notes: 'Examination Content Outline.', favorite: true },
+      { title: 'Búsqueda: PMP Exam Content Outline (PDF)', url: 'https://www.google.com/search?q=pmp+exam+content+outline+filetype%3Apdf', type: 'pdf', language: 'en', tags: ['búsqueda'], notes: '' }
+    ]
+  },
+  {
+    match: /az-104|azure\s*administrator/i,
+    name: 'Microsoft Azure Administrator (AZ-104)',
+    source: 'Skills measured oficiales AZ-104',
+    guideUrl: 'https://learn.microsoft.com/credentials/certifications/azure-administrator/',
+    modules: [
+      {
+        title: 'Administrar identidades y gobernanza (20–25%)',
+        description: 'Microsoft Entra ID, RBAC y costos.',
+        topics: [
+          { title: 'Microsoft Entra ID', subtopics: ['Usuarios y grupos', 'Acceso condicional', 'Dispositivos'] },
+          { title: 'Gobernanza', subtopics: ['Azure Policy', 'RBAC', 'Management groups'] },
+          { title: 'Costos', subtopics: ['Presupuestos y alertas', 'Azure Cost Management'] }
+        ]
+      },
+      {
+        title: 'Implementar y administrar almacenamiento (15–20%)',
+        description: 'Storage accounts, blobs y archivos.',
+        topics: [
+          { title: 'Azure Storage', subtopics: ['Cuentas de almacenamiento', 'Blobs y tiers', 'Azure Files'] },
+          { title: 'Acceso y protección', subtopics: ['SAS y claves', 'Firewall de storage', 'Backup de archivos'] }
+        ]
+      },
+      {
+        title: 'Implementar y administrar cómputo (20–25%)',
+        description: 'VMs, contenedores y App Service.',
+        topics: [
+          { title: 'Máquinas virtuales', subtopics: ['Tamaños y planes', 'Disponibilidad (VMSS)', 'Extensiones'] },
+          { title: 'Contenedores y PaaS', subtopics: ['Azure Kubernetes Service', 'App Service', 'Container Apps'] }
+        ]
+      },
+      {
+        title: 'Configurar redes virtuales (25–30%)',
+        description: 'VNets, conectividad, DNS y balanceo.',
+        topics: [
+          { title: 'VNets y conectividad', subtopics: ['Subredes y NSGs', 'Peering', 'VPN Gateway y ExpressRoute'] },
+          { title: 'Servicios de red', subtopics: ['Route tables y DNS', 'Load Balancer y App Gateway'] }
+        ]
+      },
+      {
+        title: 'Monitorear y respaldar recursos (10–15%)',
+        description: 'Azure Monitor, logs y recuperación.',
+        topics: [
+          { title: 'Azure Monitor', subtopics: ['Métricas y alertas', 'Log Analytics'] },
+          { title: 'Backup y DR', subtopics: ['Azure Backup', 'Azure Site Recovery'] }
+        ]
+      }
+    ],
+    resources: [
+      { title: 'Microsoft Learn — AZ-104', url: 'https://learn.microsoft.com/credentials/certifications/azure-administrator/', type: 'web', language: 'en', tags: ['oficial'], notes: 'Skills measured y guía de estudio.', favorite: true },
+      { title: 'Rutas de aprendizaje AZ-104', url: 'https://learn.microsoft.com/training/paths/az-104-manage-identities-governance/', type: 'web', language: 'en', tags: ['oficial', 'documentación'], notes: '' }
+    ]
+  },
+  {
+    match: /ccna|200-301/i,
+    name: 'Cisco CCNA (200-301)',
+    source: 'Blueprint oficial Cisco CCNA 200-301',
+    guideUrl: 'https://www.cisco.com/site/us/en/learning/training-events/certifications/enterprise/ccna.html',
+    modules: [
+      {
+        title: 'Fundamentos de red (20%)',
+        description: 'Modelos, direccionamiento e infraestructura física.',
+        topics: [
+          { title: 'Modelos OSI y TCP/IP', subtopics: ['Capas y encapsulamiento', 'IPv4 e IPv6'] },
+          { title: 'Infraestructura', subtopics: ['Cables e interfaces', 'Troubleshooting básico'] }
+        ]
+      },
+      {
+        title: 'Acceso a la red (20%)',
+        description: 'Switching y wireless.',
+        topics: [
+          { title: 'VLANs y trunks', subtopics: ['VLANs', 'DTP y trunking'] },
+          { title: 'Redundancia y wireless', subtopics: ['STP y EtherChannel', 'WLC y APs'] }
+        ]
+      },
+      {
+        title: 'Conectividad IP (25%)',
+        description: 'Enrutamiento y servicios IP.',
+        topics: [
+          { title: 'Enrutamiento', subtopics: ['Rutas estáticas', 'OSPF de área única'] },
+          { title: 'Servicios de ruteo', subtopics: ['Tabla de ruteo', 'Ruteo IPv6'] }
+        ]
+      },
+      {
+        title: 'Servicios IP (10%)',
+        description: 'NAT, VPN y QoS.',
+        topics: [
+          { title: 'NAT y VPN', subtopics: ['NAT estático y PAT', 'VPN site-to-site básica'] },
+          { title: 'QoS', subtopics: ['Conceptos de QoS', 'Marcado y colas'] }
+        ]
+      },
+      {
+        title: 'Fundamentos de seguridad (20%)',
+        description: 'Conceptos, ACLs y seguridad de puertos.',
+        topics: [
+          { title: 'Conceptos', subtopics: ['Amenazas y ataques', 'Defensas fundamentales'] },
+          { title: 'Control de acceso', subtopics: ['ACLs', 'Port security', '802.1X'] }
+        ]
+      },
+      {
+        title: 'Automatización y programabilidad (5%)',
+        description: 'APIs, JSON y controladores.',
+        topics: [
+          { title: 'Automatización', subtopics: ['APIs REST', 'JSON y formatos de datos'] },
+          { title: 'Controladores', subtopics: ['SDN básico', 'Cisco DNA / Meraki'] }
+        ]
+      }
+    ],
+    resources: [
+      { title: 'Cisco — CCNA', url: 'https://www.cisco.com/site/us/en/learning/training-events/certifications/enterprise/ccna.html', type: 'web', language: 'en', tags: ['oficial'], notes: 'Temas del examen 200-301.', favorite: true },
+      { title: 'Búsqueda: CCNA 200-301 official topics (PDF)', url: 'https://www.google.com/search?q=ccna+200-301+exam+topics+filetype%3Apdf', type: 'pdf', language: 'en', tags: ['búsqueda'], notes: '' }
+    ]
+  }
+];
+const GEN_LOG_CERT = [
+  'Leyendo nombre exacto, descripción y detalles del examen…',
+  'Buscando información oficial del examen…',
+  'Extrayendo dominios, tópicos y pesos…',
+  'Construyendo módulos alineados al examen…',
+  'Seleccionando documentación y recursos de autoestudio…',
+  'Ajustando el plan de estudio final…'
+];
+
+const GEN_LOG_FREE = [
+  'Leyendo nombre, descripción y detalles del tema…',
+  'Diseñando la estructura de estudio…',
+  'Creando módulos y subsecciones base…'
+];
+
+/* ================= TEMPLATES DE BÚSQUEDA Y EXÁMENES ================= */
+
+const SEARCH_PROVIDER_LABELS = {
+  'google-links': 'Google directo (sin API)',
+  'google-cse': 'Google Custom Search JSON API',
+  'serpapi': 'SerpApi (Google)'
+};
+
+const SEARCH_TEMPLATES = {
+  es: {
+    pdf: [
+      { label: 'PDF general', query: '{t} filetype:pdf' },
+      { label: 'Guía/apuntes', query: '{t} guía apuntes filetype:pdf' }
+    ],
+    video: [
+      { label: 'Video explicativo', query: '{t} explicado' },
+      { label: 'Tutorial práctico', query: '{t} tutorial' }
+    ],
+    web: [
+      { label: 'Guía de estudio', query: '{t} guía de estudio' },
+      { label: 'Documentación', query: '{t} documentación resumen' }
+    ]
+  },
+  en: {
+    pdf: [
+      { label: 'General PDF', query: '{t} filetype:pdf' },
+      { label: 'Study guide PDF', query: '{t} study guide filetype:pdf' }
+    ],
+    video: [
+      { label: 'Explained video', query: '{t} explained' },
+      { label: 'Tutorial', query: '{t} tutorial' }
+    ],
+    web: [
+      { label: 'Study guide', query: '{t} study guide' },
+      { label: 'Official docs', query: '{t} official documentation' }
+    ]
+  }
+};
+
+const EXAM_OPTIONS = {
+  subtopic: [10, 12, 15],
+  chapter: [20, 25, 30],
+  module: [20, 25, 30],
+  plan: [30, 40, 50]
+};
+
+const EXAM_SCOPE_LABEL = {
+  subtopic: 'subsección',
+  chapter: 'capítulo',
+  module: 'módulo',
+  plan: 'plan general'
+};
+
+const EXAM_TEMPLATES = {
+  es: {
+    stems: [
+      '¿Cuál afirmación describe mejor "{t}" en el contexto de este examen?',
+      '¿Cuál es el objetivo principal de "{t}" según el temario?',
+      '¿En qué escenario sería más apropiado aplicar "{t}"?',
+      '¿Qué afirmación sobre "{t}" es correcta?',
+      '¿Qué concepto está más directamente relacionado con "{t}"?'
+    ],
+    optionSets: [
+      ['La definición oficial de {t}', 'Un concepto no relacionado con {t}', 'Una limitación inventada de {t}', 'Un término similar pero distinto a {t}'],
+      ['Garantizar el propósito central de {t}', 'Cambiar un objetivo no relacionado con {t}', 'Eliminar la necesidad de {t}', 'Confundir {t} con otro concepto'],
+      ['Un caso de uso típico de {t}', 'Un escenario incompatible con {t}', 'Un caso falso asociado a {t}', 'Un uso incorrecto de {t}'],
+      ['Una característica verdadera de {t}', 'Una característica falsa de {t}', 'Una restricción incorrecta de {t}', 'Un comportamiento no asociado a {t}'],
+      ['El concepto más relacionado con {t}', 'Un concepto opuesto a {t}', 'Una tecnología no relacionada con {t}', 'Un término que solo suena parecido a {t}']
+    ],
+    explanation: 'Pregunta simulada del prototipo. En producción, la IA recibirá el contexto completo del plan (nombre exacto, descripción y detalles) para generar preguntas reales sobre {t}.'
+  },
+  en: {
+    stems: [
+      'Which statement best describes "{t}" in the context of this exam?',
+      'What is the main purpose of "{t}" according to the syllabus?',
+      'In which scenario would "{t}" be most appropriate?',
+      'Which statement about "{t}" is correct?',
+      'Which concept is most directly related to "{t}"?'
+    ],
+    optionSets: [
+      ['The official definition of {t}', 'An unrelated concept', 'An invented limitation of {t}', 'A similar but different term'],
+      ['To support the main purpose of {t}', 'To change an unrelated objective', 'To remove the need for {t}', 'To confuse {t} with another concept'],
+      ['A typical use case for {t}', 'A scenario incompatible with {t}', 'A false case associated with {t}', 'An incorrect use of {t}'],
+      ['A true characteristic of {t}', 'A false characteristic of {t}', 'An incorrect restriction of {t}', 'A behavior unrelated to {t}'],
+      ['The concept most related to {t}', 'A concept opposite to {t}', 'An unrelated technology', 'A term that only sounds similar to {t}']
+    ],
+    explanation: 'Prototype question. In production, the AI provider will receive the full plan context (exact name, description and details) to generate real questions about {t}.'
+  }
+};
+
+const VIEW_INFO = {
+  dashboard: { title: 'Dashboard', subtitle: 'Todos tus planes activos.', crumb: 'Dashboard', planScoped: false },
+  planDash: { title: 'Panel del plan', subtitle: 'Resumen del plan seleccionado.', crumb: 'Panel', planScoped: true },
+  plan: { title: 'Plan de estudio', subtitle: 'Módulos, capítulos y subsecciones.', crumb: 'Plan de estudio', planScoped: true },
+  material: { title: 'Material', subtitle: 'YouTube, webs, PDFs y material general.', crumb: 'Material', planScoped: true },
+  exams: { title: 'Exámenes', subtitle: 'Historial de exámenes.', crumb: 'Exámenes', planScoped: true },
+  archive: { title: 'Archivo', subtitle: 'Planes completados o archivados.', crumb: 'Archivo', planScoped: false },
+  settings: { title: 'Ajustes', subtitle: 'Interfaz, idiomas, búsqueda, IA y exámenes.', crumb: 'Ajustes', planScoped: false }
+};
+const seedPlans = [
+  {
+    id: 'plan_aws',
+    name: 'AWS Certified Solutions Architect – Associate',
+    certification: 'SAA-C03',
+    description: 'Certificación de arquitectura en AWS enfocada en diseño de sistemas seguros, resilientes, de alto rendimiento y optimizados en costos.',
+    details: '4 dominios oficiales: Seguras 30%, Resilientes 26%, Alto rendimiento 24%, Optimización de costos 20%. 65 preguntas, 130 minutos, puntaje mínimo 720. Quiero énfasis en VPC, IAM y S3.',
+    examDate: '2026-08-20',
+    color: '#4ee1c1',
+    status: 'active',
+    archivedAt: null,
+    completedAt: null,
+    source: 'Dominios oficiales AWS SAA-C03',
+    createdAt: Date.now(),
+    modules: [
+      {
+        id: 'aws_m1',
+        title: 'Dominio 1 · Diseñar arquitecturas seguras (30%)',
+        description: 'Accesos, protección de datos e infraestructura segura.',
+        source: 'Dominios oficiales AWS SAA-C03',
+        topics: [
+          {
+            id: 'aws_t1',
+            title: 'Identidad y acceso (IAM)',
+            subtopics: [
+              { id: 'aws_s1', title: 'Usuarios, grupos y roles', completed: true },
+              { id: 'aws_s2', title: 'Políticas de permisos', completed: false },
+              { id: 'aws_s3', title: 'MFA y AWS STS', completed: false }
+            ]
+          },
+          {
+            id: 'aws_t2',
+            title: 'Protección de datos',
+            subtopics: [
+              { id: 'aws_s4', title: 'Cifrado en reposo (KMS)', completed: false },
+              { id: 'aws_s5', title: 'Cifrado en tránsito (TLS)', completed: false }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'aws_m2',
+        title: 'Dominio 2 · Diseñar arquitecturas resilientes (26%)',
+        description: 'Alta disponibilidad, desacople y recuperación ante desastres.',
+        source: 'Dominios oficiales AWS SAA-C03',
+        topics: [
+          {
+            id: 'aws_t3',
+            title: 'Alta disponibilidad',
+            subtopics: [
+              { id: 'aws_s6', title: 'Multi-AZ', completed: false },
+              { id: 'aws_s7', title: 'Load Balancers', completed: false },
+              { id: 'aws_s8', title: 'Auto Scaling', completed: false }
+            ]
+          },
+          {
+            id: 'aws_t4',
+            title: 'Redes',
+            subtopics: [
+              { id: 'aws_s9', title: 'VPC y subredes', completed: false },
+              { id: 'aws_s10', title: 'Subnetting', completed: false }
+            ]
+          }
+        ]
+      }
+    ],
+    resources: [
+      {
+        id: 'res_aws_1',
+        title: 'AWS Certification (oficial)',
+        url: 'https://aws.amazon.com/certification/certified-solutions-architect-associate/',
+        type: 'web',
+        scopeLevel: 'plan',
+        scopeId: null,
+        language: 'en',
+        tags: ['oficial'],
+        notes: 'Dominios y guía oficial del examen.',
+        favorite: true,
+        downloaded: false,
+        createdAt: Date.now() - 100000
+      },
+      {
+        id: 'res_aws_2',
+        title: 'AWS VPC overview',
+        url: 'https://www.youtube.com/results?search_query=aws+vpc+overview',
+        type: 'youtube',
+        scopeLevel: 'topic',
+        scopeId: 'aws_t4',
+        language: 'en',
+        tags: ['redes'],
+        notes: '',
+        favorite: false,
+        downloaded: false,
+        createdAt: Date.now() - 90000
+      },
+      {
+        id: 'res_aws_3',
+        title: 'Subnetting guide PDF',
+        url: 'https://example.com/subnetting-guide.pdf',
+        type: 'pdf',
+        scopeLevel: 'subtopic',
+        scopeId: 'aws_s10',
+        language: 'es',
+        tags: ['práctica'],
+        notes: 'Ejemplo de PDF asignado a una subsección.',
+        favorite: false,
+        downloaded: false,
+        createdAt: Date.now() - 80000
+      }
+    ],
+    exams: []
+  },
+  {
+    id: 'plan_sec',
+    name: 'CompTIA Security+',
+    certification: 'SY0-701',
+    description: 'Certificación base de ciberseguridad: conceptos generales, amenazas, arquitectura, operaciones y gestión de programas de seguridad.',
+    details: '5 dominios oficiales. Máximo 90 preguntas, 90 minutos, puntaje 750/900. Nivel principiante-intermedio. Me interesa profundizar en criptografía y respuesta a incidentes.',
+    examDate: '2026-10-05',
+    color: '#6aa9ff',
+    status: 'active',
+    archivedAt: null,
+    completedAt: null,
+    source: 'Dominios oficiales Security+ SY0-701',
+    createdAt: Date.now(),
+    modules: [
+      {
+        id: 'sec_m1',
+        title: 'Dominio 1 · Conceptos generales de seguridad (12%)',
+        description: 'Fundamentos y gobernanza.',
+        source: 'Dominios oficiales Security+ SY0-701',
+        topics: [
+          {
+            id: 'sec_t1',
+            title: 'Fundamentos',
+            subtopics: [
+              { id: 'sec_s1', title: 'Tríada CIA', completed: false },
+              { id: 'sec_s2', title: 'Zero Trust', completed: false }
+            ]
+          }
+        ]
+      }
+    ],
+    resources: [
+      {
+        id: 'res_sec_1',
+        title: 'CompTIA Security+ objectives',
+        url: 'https://www.comptia.org/certifications/security',
+        type: 'web',
+        scopeLevel: 'plan',
+        scopeId: null,
+        language: 'en',
+        tags: ['oficial'],
+        notes: '',
+        favorite: true,
+        downloaded: false,
+        createdAt: Date.now() - 50000
+      }
+    ],
+    exams: []
+  }
+];
+/* ================= ESTADO ================= */
+
+let state = createDefaultState();
+let materialUI = { tab: 'all', type: 'all', query: '' };
+let modalContext = null;
+let currentExam = null;
+let toastTimer = null;
+let wizard = null;
+let wizardTimers = [];
+let copyBuffer = '';
+
+function createDefaultState() {
+  return {
+    contextPlanId: 'plan_aws',
+    view: 'dashboard',
+    settings: { ...defaultSettings },
+    plans: JSON.parse(JSON.stringify(seedPlans))
+  };
+}
+
+function uid(prefix) {
+  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, match => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[match]));
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    state = {
+      contextPlanId: parsed.contextPlanId || parsed.activePlanId || null,
+      view: parsed.view || 'dashboard',
+      settings: { ...defaultSettings, ...(parsed.settings || {}) },
+      plans: Array.isArray(parsed.plans) && parsed.plans.length
+        ? parsed.plans
+        : JSON.parse(JSON.stringify(seedPlans))
+    };
+    state.plans.forEach(plan => {
+      plan.status = plan.status || 'active';
+      plan.archivedAt = plan.archivedAt || null;
+      plan.completedAt = plan.completedAt || null;
+      plan.description = plan.description || '';
+      plan.details = plan.details || '';
+    });
+    if (!getPlan(state.contextPlanId)) {
+      const first = state.plans.find(p => p.status !== 'archived') || state.plans[0];
+      state.contextPlanId = first ? first.id : null;
+    }
+  } catch (error) {
+    console.warn('No se pudo cargar el estado.', error);
+    state = createDefaultState();
+  }
+}
+
+function save() {
+  try {
+    const payload = JSON.parse(JSON.stringify(state));
+    payload.settings.aiApiKey = '';
+    payload.settings.googleCseKey = '';
+    payload.settings.serpApiKey = '';
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    console.warn('No se pudo guardar el estado.', error);
+  }
+}
+
+function getPlan(id) {
+  return state.plans.find(plan => plan.id === id) || null;
+}
+
+function contextPlan() {
+  const plan = getPlan(state.contextPlanId);
+  if (plan) return plan;
+  return state.plans.find(p => p.status !== 'archived') || state.plans[0] || null;
+}
+
+function activePlans() {
+  return state.plans.filter(plan => plan.status !== 'archived');
+}
+
+function archivedPlans() {
+  return state.plans.filter(plan => plan.status === 'archived');
+}
+function findModule(plan, id) {
+  return plan.modules.find(module => module.id === id) || null;
+}
+
+function findTopicRef(plan, id) {
+  for (const module of plan.modules) {
+    const topic = module.topics.find(item => item.id === id);
+    if (topic) return { module, topic };
+  }
+  return null;
+}
+
+function findSubtopicRef(plan, id) {
+  for (const module of plan.modules) {
+    for (const topic of module.topics) {
+      const subtopic = topic.subtopics.find(item => item.id === id);
+      if (subtopic) return { module, topic, subtopic };
+    }
+  }
+  return null;
+}
+
+function findResource(plan, id) {
+  return plan.resources.find(resource => resource.id === id) || null;
+}
+
+function planStats(plan) {
+  let total = 0, done = 0, topicCount = 0, next = null;
+
+  plan.modules.forEach(module => {
+    module.topics.forEach(topic => {
+      topicCount++;
+      topic.subtopics.forEach(subtopic => {
+        total++;
+        if (subtopic.completed) done++;
+        else if (!next) next = { title: subtopic.title, moduleName: module.title, topicName: topic.title };
+      });
+    });
+  });
+
+  const percent = total ? Math.round((done / total) * 100) : 0;
+  const general = plan.resources.filter(r => r.scopeLevel === 'plan').length;
+  const exams = plan.exams.length;
+  const passed = plan.exams.filter(e => e.passed).length;
+  const avg = exams ? Math.round(plan.exams.reduce((sum, e) => sum + e.percentage, 0) / exams) : null;
+
+  return { total, done, percent, topicCount, next, resources: plan.resources.length, general, exams, passed, avg };
+}
+
+function moduleStats(module) {
+  const subs = module.topics.flatMap(t => t.subtopics);
+  const done = subs.filter(s => s.completed).length;
+  return { total: subs.length, done, percent: subs.length ? Math.round((done / subs.length) * 100) : 0 };
+}
+function resourcesForScope(plan, level, id) {
+  return plan.resources.filter(r => r.scopeLevel === level && (level === 'plan' || r.scopeId === id));
+}
+
+function relatedResources(plan, level, id) {
+  if (level === 'plan') return plan.resources.filter(r => r.scopeLevel === 'plan');
+
+  if (level === 'module') {
+    const module = findModule(plan, id);
+    if (!module) return [];
+    const topicIds = new Set(module.topics.map(t => t.id));
+    const subIds = new Set(module.topics.flatMap(t => t.subtopics.map(s => s.id)));
+    return plan.resources.filter(r =>
+      (r.scopeLevel === 'module' && r.scopeId === id) ||
+      (r.scopeLevel === 'topic' && topicIds.has(r.scopeId)) ||
+      (r.scopeLevel === 'subtopic' && subIds.has(r.scopeId))
+    );
+  }
+
+  if (level === 'topic') {
+    const ref = findTopicRef(plan, id);
+    if (!ref) return [];
+    const subIds = new Set(ref.topic.subtopics.map(s => s.id));
+    return plan.resources.filter(r =>
+      (r.scopeLevel === 'topic' && r.scopeId === id) ||
+      (r.scopeLevel === 'subtopic' && subIds.has(r.scopeId))
+    );
+  }
+
+  return plan.resources.filter(r => r.scopeLevel === level && r.scopeId === id);
+}
+
+function scopeLabel(plan, resource) {
+  if (resource.scopeLevel === 'plan') return 'Material general';
+  if (resource.scopeLevel === 'module') {
+    const module = findModule(plan, resource.scopeId);
+    return module ? `Módulo: ${module.title}` : 'Módulo';
+  }
+  if (resource.scopeLevel === 'topic') {
+    const ref = findTopicRef(plan, resource.scopeId);
+    return ref ? `Capítulo: ${ref.topic.title}` : 'Capítulo';
+  }
+  if (resource.scopeLevel === 'subtopic') {
+    const ref = findSubtopicRef(plan, resource.scopeId);
+    return ref ? `Subsección: ${ref.subtopic.title}` : 'Subsección';
+  }
+  return 'Sin asignar';
+}
+function detectResourceType(url) {
+  const value = String(url || '');
+  if (/youtube\.com|youtu\.be/i.test(value)) return 'youtube';
+  if (/\.pdf(?:$|[?#])/i.test(value)) return 'pdf';
+  if (/vimeo\.com|twitch\.tv/i.test(value)) return 'video';
+  return 'web';
+}
+
+function typeIcon(type) {
+  return { youtube: '🎥', pdf: '📄', web: '🌐', video: '▶️', other: '🔗' }[type] || '🔗';
+}
+
+function typeLabel(type) {
+  return { youtube: 'YouTube', pdf: 'PDF', web: 'Web', video: 'Video', other: 'Otro' }[type] || 'Otro';
+}
+
+function hostname(url) {
+  try { return new URL(url).hostname; } catch { return url; }
+}
+
+function langLabel(code) {
+  const map = { es: 'Español', en: 'English', other: 'Otro' };
+  return map[code] || String(code || '').toUpperCase();
+}
+
+function initials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return 'P';
+  return parts.slice(0, 2).map(part => part[0]).join('').toUpperCase();
+}
+
+function allowedContentLanguages() {
+  const primary = state.settings.contentPrimary || 'es';
+  const secondary = state.settings.contentSecondary;
+  if (!secondary || secondary === 'none' || secondary === primary) return [primary];
+  return [primary, secondary];
+}
+
+function examLanguage() {
+  return state.settings.examLanguageMode === 'content' ? state.settings.contentPrimary : state.settings.uiLanguage;
+}
+
+function googleSearchUrl(query, lang = 'es') {
+  const params = new URLSearchParams({ q: query, hl: lang, lr: `lang_${lang}`, num: '10' });
+  return `https://www.google.com/search?${params.toString()}`;
+}
+
+function youtubeSearchUrl(query, lang = 'es') {
+  const params = new URLSearchParams({ search_query: query, hl: lang, gl: lang === 'es' ? 'ES' : 'US' });
+  return `https://www.youtube.com/results?${params.toString()}`;
+}
+/* ================= GENERADOR DE PLANES (USA EL CONTEXTO COMO INPUT) ================= */
+
+function generateSyllabus(examName, description = '', details = '') {
+  const contextText = `${examName} ${description} ${details}`;
+  const blueprint = EXAM_BLUEPRINTS.find(bp => bp.match.test(contextText));
+
+  if (blueprint) {
+    return {
+      source: blueprint.source,
+      matched: blueprint.name,
+      guideUrl: blueprint.guideUrl,
+      modules: JSON.parse(JSON.stringify(blueprint.modules)),
+      resources: JSON.parse(JSON.stringify(blueprint.resources))
+    };
+  }
+
+  return genericSyllabus(examName, description, details);
+}
+
+function genericSyllabus(examName, description = '', details = '') {
+  const keywords = extractKeywords(`${description} ${details}`, 8);
+  const kwA = keywords.slice(0, 4);
+  const kwB = keywords.slice(4, 8);
+
+  return {
+    source: description || details ? 'Estructura base + contexto del usuario' : 'Estructura base de autoestudio',
+    matched: null,
+    guideUrl: null,
+    modules: [
+      {
+        title: 'Módulo 1 · El examen y su guía oficial',
+        description: 'Entender la estructura antes de estudiar.',
+        topics: [
+          { title: 'Estructura y objetivos', subtopics: ['Formato del examen', 'Dominios oficiales', 'Puntaje y aprobación'] },
+          { title: 'Planificación del estudio', subtopics: ['Cronograma realista', 'Materiales de referencia'] }
+        ]
+      },
+      {
+        title: 'Módulo 2 · Fundamentos del tema',
+        description: 'Base conceptual necesaria.',
+        topics: [
+          { title: 'Conceptos clave', subtopics: [`Conceptos principales de ${examName}`, 'Terminología esencial'] },
+          {
+            title: 'Temas específicos de tu descripción',
+            subtopics: kwA.length ? kwA.map(k => `Profundizar: ${k}`) : ['Completar con la guía oficial (1)', 'Completar con la guía oficial (2)']
+          }
+        ]
+      },
+      {
+        title: 'Módulo 3 · Profundización y práctica',
+        description: 'Dominios restantes y práctica aplicada.',
+        topics: [
+          {
+            title: 'Temas avanzados de tu descripción',
+            subtopics: kwB.length ? kwB.map(k => `Profundizar: ${k}`) : ['Completar con la guía oficial (3)', 'Completar con la guía oficial (4)']
+          },
+          { title: 'Práctica aplicada', subtopics: ['Ejercicios', 'Laboratorios o casos'] }
+        ]
+      },
+      {
+        title: 'Módulo 4 · Preparación final',
+        description: 'Repaso y simulacros.',
+        topics: [
+          { title: 'Repaso de temas débiles', subtopics: ['Preguntas falladas', 'Repaso focalizado'] },
+          { title: 'Simulacros', subtopics: ['Simulacro completo #1', 'Simulacro completo #2', 'Repaso final'] }
+        ]
+      }
+    ],
+    resources: [
+      { title: `Buscar guía oficial: ${examName}`, url: googleSearchUrl(`${examName} ${keywords.slice(0, 3).join(' ')} official exam guide`.trim(), 'en'), type: 'web', language: 'en', tags: ['oficial', 'búsqueda'], notes: 'Localiza la guía oficial del examen.', favorite: true },
+      { title: `Buscar guía del examen en PDF`, url: googleSearchUrl(`${examName} ${keywords.slice(0, 3).join(' ')} exam guide filetype:pdf`.trim(), 'en'), type: 'pdf', language: 'en', tags: ['búsqueda'], notes: '' }
+    ]
+  };
+}
+function freeSkeleton(topic, description = '', details = '') {
+  const keywords = extractKeywords(`${description} ${details}`, 6);
+
+  return {
+    modules: [
+      {
+        title: 'Módulo 1 · Fundamentos',
+        description: 'Bases conceptuales.',
+        topics: [
+          { title: 'Introducción', subtopics: ['Qué es y por qué importa', 'Terminología clave'] },
+          { title: 'Conceptos base', subtopics: keywords.length ? keywords.slice(0, 3).map(k => `Concepto: ${k}`) : ['Conceptos principales', 'Herramientas básicas'] }
+        ]
+      },
+      {
+        title: 'Módulo 2 · Nivel intermedio',
+        description: 'Profundización progresiva.',
+        topics: [
+          { title: 'Temas intermedios', subtopics: keywords.length > 3 ? keywords.slice(3).map(k => `Profundizar: ${k}`) : ['Conceptos avanzados I', 'Conceptos avanzados II'] }
+        ]
+      },
+      {
+        title: 'Módulo 3 · Práctica',
+        description: 'Aplicación real.',
+        topics: [
+          { title: 'Ejercicios aplicados', subtopics: ['Práctica guiada', 'Casos reales'] },
+          { title: 'Proyecto personal', subtopics: ['Definición del proyecto', 'Desarrollo'] }
+        ]
+      },
+      {
+        title: 'Módulo 4 · Consolidación',
+        description: 'Repaso y evaluación.',
+        topics: [
+          { title: 'Repaso', subtopics: ['Resumen general', 'Puntos débiles'] },
+          { title: 'Evaluación', subtopics: ['Prueba de autoevaluación', 'Revisión final'] }
+        ]
+      }
+    ],
+    resources: [
+      { title: `Buscar material de ${topic} (PDF)`, url: googleSearchUrl(`${topic} ${keywords.slice(0, 3).join(' ')} guía filetype:pdf`.trim(), state.settings.contentPrimary || 'es'), type: 'pdf', language: state.settings.contentPrimary || 'es', tags: ['búsqueda'], notes: '' }
+    ]
+  };
+}
+function buildPlanFromSyllabus(name) {
+  const syllabus = wizard.syllabus;
+  const lang = state.settings.contentPrimary || 'es';
+  const searchName = wizard.type === 'certification' ? wizard.examName : wizard.planName;
+  const suffix = extractKeywords(`${wizard.description} ${wizard.details}`, 3).join(' ');
+
+  const modules = syllabus.modules.map(m => ({
+    id: uid('mod'),
+    title: m.title,
+    description: m.description || '',
+    source: syllabus.source,
+    topics: m.topics.map(t => ({
+      id: uid('topic'),
+      title: t.title,
+      subtopics: t.subtopics.map(s => ({ id: uid('sub'), title: s, completed: false }))
+    }))
+  }));
+
+  const resources = [
+    ...(syllabus.resources || []).map(r => ({
+      id: uid('res'),
+      createdAt: Date.now(),
+      downloaded: false,
+      favorite: !!r.favorite,
+      scopeLevel: 'plan',
+      scopeId: null,
+      title: r.title,
+      url: r.url,
+      type: r.type || detectResourceType(r.url),
+      language: r.language || lang,
+      tags: r.tags || [],
+      notes: r.notes || ''
+    })),
+    ...modules.map(m => ({
+      id: uid('res'),
+      createdAt: Date.now(),
+      downloaded: false,
+      favorite: false,
+      scopeLevel: 'module',
+      scopeId: m.id,
+      title: `Búsqueda: ${m.title}`,
+      url: googleSearchUrl(`${searchName} ${suffix} ${m.title} filetype:pdf`.replace(/\s+/g, ' ').trim(), lang),
+      type: 'pdf',
+      language: lang,
+      tags: ['auto', 'búsqueda'],
+      notes: 'Búsqueda generada automáticamente con el contexto del plan.'
+    }))
+  ];
+
+  return {
+    id: uid('plan'),
+    name,
+    certification: wizard.type === 'certification' ? wizard.examName : '',
+    description: wizard.description || '',
+    details: wizard.details || '',
+    examDate: wizard.examDate || '',
+    color: wizard.color || '#4ee1c1',
+    status: 'active',
+    archivedAt: null,
+    completedAt: null,
+    source: syllabus.source,
+    createdAt: Date.now(),
+    modules,
+    resources,
+    exams: []
+  };
+}
+/* ================= RENDER: NAVEGACIÓN Y TOPBAR ================= */
+
+function applyTheme() {
+  document.body.dataset.theme = state.settings.theme || 'dark';
+}
+
+function updateViews() {
+  document.querySelectorAll('.nav-item').forEach(button => {
+    button.classList.toggle('active', button.dataset.view === state.view);
+  });
+  document.querySelectorAll('.view').forEach(section => {
+    section.classList.toggle('active', section.id === state.view);
+  });
+}
+
+function switchView(view) {
+  state.view = view;
+  save();
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderBreadcrumb() {
+  const el = document.getElementById('breadcrumb');
+  const info = VIEW_INFO[state.view] || VIEW_INFO.dashboard;
+  const plan = contextPlan();
+  const crumbs = [{ label: 'Dashboard', view: 'dashboard' }];
+
+  if (info.planScoped && plan) {
+    crumbs.push({ label: plan.name, view: 'planDash' });
+    if (state.view !== 'planDash') crumbs.push({ label: info.crumb, view: state.view });
+  } else if (state.view !== 'dashboard') {
+    crumbs.push({ label: info.crumb, view: state.view });
+  }
+
+  el.innerHTML = crumbs.map((crumb, index) => {
+    if (index === crumbs.length - 1) return `<span class="crumb current">${escapeHtml(crumb.label)}</span>`;
+    return `<button class="crumb" data-view="${crumb.view}">${escapeHtml(crumb.label)}</button>`;
+  }).join('<span class="crumb-sep">›</span>');
+}
+function renderTopbar() {
+  const plan = contextPlan();
+  if (plan && plan.id !== state.contextPlanId) state.contextPlanId = plan.id;
+
+  const info = VIEW_INFO[state.view] || VIEW_INFO.dashboard;
+  document.getElementById('top-title').textContent = info.planScoped && plan ? plan.name : info.title;
+  document.getElementById('top-subtitle').textContent = info.planScoped && plan
+    ? `${info.title}${plan.certification ? ' · ' + plan.certification : ''}`
+    : info.subtitle;
+
+  const backBtn = document.getElementById('back-btn');
+  backBtn.classList.toggle('hidden', state.view === 'dashboard');
+
+  const selector = document.getElementById('plan-selector');
+  const selectable = activePlans();
+  const ctx = plan;
+  const list = ctx && ctx.status === 'archived' && !selectable.includes(ctx) ? [ctx, ...selectable] : selectable;
+
+  selector.innerHTML = list.length
+    ? list.map(item => `<option value="${item.id}" ${item.id === state.contextPlanId ? 'selected' : ''}>${item.status === 'archived' ? '📦 ' : ''}${escapeHtml(item.name)}</option>`).join('')
+    : '<option value="">Sin planes</option>';
+  selector.disabled = !list.length;
+
+  renderBreadcrumb();
+  renderSidebar();
+}
+function renderSidebar() {
+  const element = document.getElementById('sidebar-plan');
+  const plan = contextPlan();
+
+  if (!plan) {
+    element.innerHTML = '<p class="muted small">Sin planes. Crea uno con ✨</p>';
+    return;
+  }
+
+  const stats = planStats(plan);
+  element.innerHTML = `
+    <p class="muted small">${plan.status === 'archived' ? '📦 Plan archivado' : 'Plan seleccionado'}</p>
+    <strong>${escapeHtml(plan.name)}</strong>
+    ${plan.description ? `<p class="muted small" style="margin-top:6px">${escapeHtml(plan.description.slice(0, 90))}${plan.description.length > 90 ? '…' : ''}</p>` : ''}
+    <div class="progress" style="margin:10px 0"><span style="width:${stats.percent}%"></span></div>
+    <div class="sidebar-mini">
+      <span>${stats.done}/${stats.total} temas</span>
+      <span>${stats.resources} recursos</span>
+    </div>
+    <div class="row-actions" style="margin-top:12px">
+      <button class="btn btn-soft btn-sm" data-view="planDash">Ver panel</button>
+      <button class="btn btn-ghost btn-sm" data-view="plan">Estudiar</button>
+      <button class="btn btn-ghost btn-sm" data-action="show-context" title="Ver contexto del plan">🧠</button>
+    </div>
+  `;
+}
+/* ================= RENDER: DASHBOARD ================= */
+
+function renderDashboard() {
+  const archived = archivedPlans();
+  const strip = document.getElementById('archive-strip');
+  strip.innerHTML = `
+    <span>📦 <strong>${archived.length}</strong> plan(es) archivado(s) — consulta tu historial de certificaciones.</span>
+    <button class="btn btn-ghost btn-sm" data-view="archive">Abrir archivo</button>
+  `;
+
+  const plans = activePlans();
+  const grid = document.getElementById('plans-grid');
+
+  if (!plans.length) {
+    grid.innerHTML = `
+      <div class="glass card empty" style="grid-column:1/-1">
+        <h3>No hay planes activos</h3>
+        <p>Crea un plan con nombre exacto, descripción y detalles: se usará como entrada para los módulos, exámenes y búsquedas.</p>
+        <div class="row-actions" style="justify-content:center;margin-top:14px">
+          <button class="btn btn-accent" data-action="create-plan">✨ Crear plan de estudio</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = plans.map(plan => {
+    const stats = planStats(plan);
+    const color = plan.color || '#4ee1c1';
+    const recentGeneral = plan.resources.filter(r => r.scopeLevel === 'plan').slice(0, 3);
+
+    return `
+      <article class="glass plan-card" style="--accent:${color}">
+        <div class="plan-card-head">
+          <div class="plan-avatar">${escapeHtml(initials(plan.name))}</div>
+          <div class="plan-meta">
+            <h3>${escapeHtml(plan.name)}</h3>
+            <p>${escapeHtml(plan.certification || 'Plan de estudio')}</p>
+          </div>
+          <div class="ring" style="--percent:${stats.percent}"><strong>${stats.percent}%</strong></div>
+        </div>
+
+        ${plan.description ? `<p class="muted small" style="margin-top:10px;position:relative;z-index:1">${escapeHtml(plan.description.slice(0, 120))}${plan.description.length > 120 ? '…' : ''}</p>` : ''}
+
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:1">
+          ${plan.source ? `<span class="badge">📋 ${escapeHtml(plan.source)}</span>` : ''}
+          ${plan.description || plan.details ? `<button class="badge" data-action="show-context" data-plan="${plan.id}" style="cursor:pointer">🧠 Contexto definido</button>` : ''}
+        </div>
+
+        <div class="mini-stats">
+          <span><strong>${plan.modules.length}</strong>módulos</span>
+          <span><strong>${stats.topicCount}</strong>capítulos</span>
+          <span><strong>${stats.done}/${stats.total}</strong>temas</span>
+          <span><strong>${stats.resources}</strong>materiales</span>
+        </div>
+        <div class="next-box">
+          ${stats.next
+            ? `<span class="badge">Siguiente</span><strong>${escapeHtml(stats.next.title)}</strong><small class="muted">${escapeHtml(stats.next.moduleName)} · ${escapeHtml(stats.next.topicName)}</small>`
+            : `<span class="badge badge-success">🎓 Plan completado — archívalo cuando quieras</span>`}
+        </div>
+
+        ${recentGeneral.length ? `
+          <div class="quick-material">
+            <span class="badge">Material general</span>
+            <div class="quick-links">
+              ${recentGeneral.map(resource => `
+                <button class="quick-link" data-action="open-resource" data-plan="${plan.id}" data-id="${resource.id}">
+                  ${typeIcon(resource.type)} ${escapeHtml(resource.title)}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="plan-actions">
+          <button class="btn btn-accent btn-sm" data-action="open-plan" data-plan="${plan.id}">Abrir panel</button>
+          <button class="btn btn-soft btn-sm" data-action="add-resource" data-plan="${plan.id}" data-scope="plan:">+ Material</button>
+          <button class="btn btn-ghost btn-sm" data-action="edit-plan-info" data-plan="${plan.id}">✏️ Info</button>
+          <button class="btn btn-ghost btn-sm" data-action="archive-plan" data-plan="${plan.id}" title="Archivar plan">📦</button>
+          <button class="btn btn-danger btn-sm" data-action="delete-plan" data-plan="${plan.id}" title="Eliminar plan">🗑</button>
+        </div>
+      </article>
+    `;
+  }).join('') + `
+    <button class="glass plan-card create-plan" data-action="create-plan">
+      <div>
+        <h3>+ Nuevo plan</h3>
+        <p class="muted small">Con nombre exacto, descripción y detalles del examen o tema.</p>
+      </div>
+    </button>
+  `;
+}
+/* ================= RENDER: PANEL DEL PLAN ================= */
+
+function archivedBanner(plan) {
+  return `
+    <div class="banner archive">
+      <span>📦 <strong>${escapeHtml(plan.name)}</strong> está archivado (modo consulta). Ya no cuenta como plan activo.</span>
+      <div class="row-actions">
+        <button class="btn btn-soft btn-sm" data-action="restore-plan" data-plan="${plan.id}">Restaurar como activo</button>
+      </div>
+    </div>
+  `;
+}
+
+function completedBanner(plan) {
+  return `
+    <div class="banner success">
+      <span>🎓 ¡Plan completado al 100%! Puedes archivarlo y consultarlo cuando quieras.</span>
+      <div class="row-actions">
+        <button class="btn btn-accent btn-sm" data-action="archive-plan" data-completed="1" data-plan="${plan.id}">Completar y archivar</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderPlanDash() {
+  const plan = contextPlan();
+  const container = document.getElementById('plandash-container');
+
+  if (!plan) {
+    container.innerHTML = `
+      <div class="glass card empty">
+        <h3>Sin plan seleccionado</h3>
+        <p>Crea un plan desde el dashboard.</p>
+        <div class="row-actions" style="justify-content:center;margin-top:14px">
+          <button class="btn btn-accent" data-action="create-plan">✨ Crear plan</button>
+          <button class="btn btn-ghost" data-view="dashboard">← Volver al dashboard</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const stats = planStats(plan);
+  const recentGeneral = plan.resources.filter(r => r.scopeLevel === 'plan').slice(0, 5);
+  const recentExams = plan.exams.slice(0, 3);
+
+  container.innerHTML = `
+    ${plan.status === 'archived' ? archivedBanner(plan) : ''}
+    ${stats.percent === 100 && stats.total > 0 && plan.status !== 'archived' ? completedBanner(plan) : ''}
+
+    <div class="glass card plan-hero" style="--accent:${plan.color || '#4ee1c1'}">
+      <div class="plan-hero-grid">
+        <div>
+          <span class="badge">${plan.status === 'archived' ? '📦 Archivado' : 'Plan activo'}</span>
+          ${plan.source ? `<span class="badge">📋 ${escapeHtml(plan.source)}</span>` : ''}
+          <h2 style="margin-top:8px">${escapeHtml(plan.name)}</h2>
+          <p class="muted">${escapeHtml(plan.certification || 'Plan de estudio')}</p>
+          ${plan.description ? `<p class="small" style="margin-top:8px">${escapeHtml(plan.description)}</p>` : ''}
+          ${plan.details ? `<p class="muted small" style="margin-top:6px">📌 ${escapeHtml(plan.details)}</p>` : ''}
+          ${plan.examDate ? `<p class="muted small" style="margin-top:6px">Fecha objetivo: ${escapeHtml(plan.examDate)}</p>` : ''}
+          ${plan.completedAt ? `<p class="muted small">Completado: ${new Date(plan.completedAt).toLocaleDateString('es')}</p>` : ''}
+        </div>
+        <div>
+          <div class="progress"><span style="width:${stats.percent}%"></span></div>
+          <div class="progress-meta"><span>${stats.done}/${stats.total} subsecciones</span><strong>${stats.percent}%</strong></div>
+          <div class="mini-stats" style="margin-top:14px">
+            <span><strong>${plan.modules.length}</strong>módulos</span>
+            <span><strong>${stats.topicCount}</strong>capítulos</span>
+            <span><strong>${stats.resources}</strong>materiales</span>
+            <span><strong>${stats.exams}</strong>exámenes</span>
+          </div>
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-accent" data-view="plan">📚 Plan de estudio</button>
+        <button class="btn btn-ghost" data-view="material">🔗 Material</button>
+        <button class="btn btn-ghost" data-view="exams">📝 Exámenes</button>
+        <button class="btn btn-ghost" data-action="google-search" data-title="${escapeHtml(plan.certification || plan.name)}" data-plan="${plan.id}">Buscar Google</button>
+        <button class="btn btn-soft" data-action="exam" data-scope="plan" data-title="${escapeHtml(plan.name)}" data-plan="${plan.id}">Examen general</button>
+        <button class="btn btn-ghost" data-action="edit-plan-info" data-plan="${plan.id}">✏️ Editar info del examen</button>
+        <button class="btn btn-ghost" data-action="show-context" data-plan="${plan.id}">🧠 Contexto IA/búsqueda</button>
+        ${plan.status !== 'archived' ? `<button class="btn btn-ghost" data-action="archive-plan" data-plan="${plan.id}">📦 Archivar</button>` : ''}
+        <button class="btn btn-danger" data-action="delete-plan" data-plan="${plan.id}">🗑 Eliminar</button>
+        <button class="btn btn-ghost" data-view="dashboard">← Volver al dashboard</button>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div class="glass card">
+        <h3>Siguiente paso</h3>
+        ${stats.next ? `
+          <div class="next-box" style="margin-top:12px">
+            <span class="badge">Continuar con</span>
+            <strong>${escapeHtml(stats.next.title)}</strong>
+            <small class="muted">${escapeHtml(stats.next.moduleName)} · ${escapeHtml(stats.next.topicName)}</small>
+          </div>
+          <div class="row-actions">
+            <button class="btn btn-soft" data-view="plan">Ir al plan de estudio</button>
+            <button class="btn btn-ghost" data-action="google-search" data-title="${escapeHtml(stats.next.title)}" data-plan="${plan.id}">Buscar material</button>
+          </div>
+        ` : `<p class="muted" style="margin-top:10px">No hay subsecciones pendientes. Genera simulacros o archiva el plan.</p>`}
+
+        <h3 style="margin-top:22px">Progreso por módulo</h3>
+        <div class="mini-list">
+          ${plan.modules.map(module => {
+            const ms = moduleStats(module);
+            return `
+              <div class="module-progress-row">
+                <span class="small" style="flex:1;min-width:140px">${escapeHtml(module.title)}</span>
+                <div class="progress"><span style="width:${ms.percent}%"></span></div>
+                <strong class="small">${ms.percent}%</strong>
+              </div>
+            `;
+          }).join('') || '<p class="muted small">Sin módulos todavía.</p>'}
+        </div>
+      </div>
+
+      <div style="display:grid;gap:18px;align-content:start">
+        <div class="glass card">
+          <div class="section-head" style="margin-bottom:4px">
+            <h3>Material general</h3>
+            <button class="btn btn-soft btn-sm" data-action="add-resource" data-scope="plan:">+ Agregar</button>
+          </div>
+          <div class="mini-list">
+            ${recentGeneral.length ? recentGeneral.map(resource => `
+              <div class="mini-list-item">
+                <span class="small" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${typeIcon(resource.type)} ${escapeHtml(resource.title)}</span>
+                <button class="btn btn-ghost btn-sm" data-action="open-resource" data-plan="${plan.id}" data-id="${resource.id}">Abrir</button>
+              </div>
+            `).join('') : '<p class="muted small">Sin material general todavía.</p>'}
+          </div>
+          <div class="row-actions" style="margin-top:12px">
+            <button class="btn btn-ghost btn-sm" data-view="material">Ver todo el material</button>
+          </div>
+        </div>
+
+        <div class="glass card">
+          <h3>Exámenes recientes</h3>
+          <div class="mini-list">
+            ${recentExams.length ? recentExams.map(exam => `
+              <div class="mini-list-item">
+                <span class="small" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(exam.title)}</span>
+                <span class="badge ${exam.passed ? 'badge-success' : 'badge-danger'}">${exam.percentage}%</span>
+              </div>
+            `).join('') : '<p class="muted small">Sin exámenes todavía.</p>'}
+          </div>
+          ${stats.avg !== null ? `<p class="muted small" style="margin-top:10px">Promedio: <strong>${stats.avg}%</strong> · Aprobados: ${stats.passed}/${stats.exams}</p>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+/* ================= RENDER: PLAN DE ESTUDIO (CURRÍCULO) ================= */
+
+function renderCurriculumView() {
+  const plan = contextPlan();
+  const banner = document.getElementById('plan-banner');
+  const header = document.getElementById('plan-header');
+  const container = document.getElementById('modules-container');
+
+  banner.innerHTML = plan && plan.status === 'archived' ? archivedBanner(plan) : '';
+
+  if (!plan) {
+    header.innerHTML = `<div class="glass card empty"><h3>Sin plan seleccionado</h3><p>Crea un plan desde el dashboard.</p></div>`;
+    container.innerHTML = '';
+    return;
+  }
+
+  const stats = planStats(plan);
+
+  header.innerHTML = `
+    <div class="glass card plan-hero" style="--accent:${plan.color || '#4ee1c1'}">
+      <div class="plan-hero-grid">
+        <div>
+          <span class="badge">Plan de estudio</span>
+          ${plan.source ? `<span class="badge">📋 ${escapeHtml(plan.source)}</span>` : ''}
+          <h2>${escapeHtml(plan.name)}</h2>
+          <p class="muted">${escapeHtml(plan.certification || 'Plan de estudio')}</p>
+          ${plan.description ? `<p class="muted small" style="margin-top:6px">${escapeHtml(plan.description.slice(0, 160))}${plan.description.length > 160 ? '…' : ''}</p>` : ''}
+          ${plan.examDate ? `<p class="muted small">Fecha objetivo: ${escapeHtml(plan.examDate)}</p>` : ''}
+        </div>
+        <div>
+          <div class="progress"><span style="width:${stats.percent}%"></span></div>
+          <div class="progress-meta"><span>${stats.done}/${stats.total} subsecciones</span><strong>${stats.percent}%</strong></div>
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-soft" data-action="add-module">+ Módulo</button>
+        <button class="btn btn-ghost" data-action="view-resources" data-level="plan" data-title="Material general">🔗 Material general (${stats.general})</button>
+        <button class="btn btn-soft" data-action="add-resource" data-scope="plan:">+ Material general</button>
+        <button class="btn btn-ghost" data-action="google-search" data-title="${escapeHtml(plan.certification || plan.name)}" data-plan="${plan.id}">Buscar Google</button>
+        <button class="btn btn-accent" data-action="exam" data-scope="plan" data-title="${escapeHtml(plan.name)}" data-plan="${plan.id}">Examen general</button>
+        <button class="btn btn-ghost" data-action="edit-plan-info" data-plan="${plan.id}">✏️ Info</button>
+        <button class="btn btn-ghost" data-view="planDash">← Panel del plan</button>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = plan.modules.length
+    ? plan.modules.map(module => renderModule(plan, module)).join('')
+    : `
+      <div class="glass card empty">
+        <h3>Plan vacío</h3>
+        <p>Agrega tu primer módulo o genera el plan con tu proveedor de IA usando el contexto del plan.</p>
+        <div class="row-actions" style="justify-content:center;margin-top:14px">
+          <button class="btn btn-accent" data-action="add-module">+ Módulo</button>
+          <button class="btn btn-ghost" data-action="show-context" data-plan="${plan.id}">🧠 Ver contexto</button>
+        </div>
+      </div>
+    `;
+function renderModule(plan, module) {
+  const stats = moduleStats(module);
+  const resCount = relatedResources(plan, 'module', module.id).length;
+
+  return `
+    <section class="glass card" style="--accent:${plan.color || '#4ee1c1'}">
+      <div class="section-head">
+        <div>
+          <h3>${escapeHtml(module.title)}</h3>
+          <p class="muted small">${escapeHtml(module.description || '')}</p>
+          ${module.source ? `<div style="margin-top:8px"><span class="badge">📋 ${escapeHtml(module.source)}</span></div>` : ''}
+        </div>
+        <div class="row-actions compact">
+          <button class="btn btn-ghost btn-sm" data-action="view-resources" data-level="module" data-id="${module.id}" data-title="${escapeHtml(module.title)}">🔗 ${resCount}</button>
+          <button class="btn btn-soft btn-sm" data-action="add-resource" data-scope="module:${module.id}">+ Material</button>
+          <button class="btn btn-ghost btn-sm" data-action="add-chapter" data-module="${module.id}">+ Capítulo</button>
+          <button class="btn btn-ghost btn-sm" data-action="google-search" data-title="${escapeHtml(module.title)}" data-plan="${plan.id}">Google</button>
+          <button class="btn btn-ghost btn-sm" data-action="exam" data-scope="module" data-title="${escapeHtml(module.title)}" data-plan="${plan.id}">Examen</button>
+          <button class="btn btn-danger btn-sm" data-action="delete-module" data-id="${module.id}">🗑</button>
+        </div>
+      </div>
+      <div class="progress"><span style="width:${stats.percent}%"></span></div>
+      <div class="progress-meta"><span>${stats.done}/${stats.total} subsecciones</span><strong>${stats.percent}%</strong></div>
+      <div>
+        ${module.topics.length
+          ? module.topics.map(topic => renderTopic(plan, topic)).join('')
+          : '<p class="muted small" style="margin-top:14px">No hay capítulos.</p>'}
+      </div>
+    </section>
+  `;
+}
+
+function renderTopic(plan, topic) {
+  const total = topic.subtopics.length;
+  const done = topic.subtopics.filter(s => s.completed).length;
+  const completed = total > 0 && done === total;
+  const resCount = relatedResources(plan, 'topic', topic.id).length;
+
+  return `
+    <div class="chapter ${completed ? 'done' : ''}">
+      <div class="chapter-head">
+        <label class="check">
+          <input type="checkbox" data-action="toggle-chapter" data-id="${topic.id}" ${completed ? 'checked' : ''} />
+          <div>
+            <h4>${escapeHtml(topic.title)}</h4>
+            <small>${done}/${total} subsecciones · ${completed ? 'Completado' : 'Pendiente'}</small>
+          </div>
+        </label>
+        <div class="row-actions compact">
+          <button class="btn btn-ghost btn-sm" data-action="view-resources" data-level="topic" data-id="${topic.id}" data-title="${escapeHtml(topic.title)}">🔗 ${resCount}</button>
+          <button class="btn btn-soft btn-sm" data-action="add-resource" data-scope="topic:${topic.id}">+ Link</button>
+          <button class="btn btn-ghost btn-sm" data-action="google-search" data-title="${escapeHtml(topic.title)}" data-plan="${plan.id}">Google</button>
+          <button class="btn btn-ghost btn-sm" data-action="exam" data-scope="chapter" data-title="${escapeHtml(topic.title)}" data-plan="${plan.id}">Examen</button>
+          <button class="btn btn-soft btn-sm" data-action="add-subtopic" data-topic="${topic.id}">+ Subsección</button>
+          <button class="btn btn-danger btn-sm" data-action="delete-chapter" data-id="${topic.id}">🗑</button>
+        </div>
+      </div>
+      <div class="subtopics">
+        ${topic.subtopics.length
+          ? topic.subtopics.map(sub => renderSubtopic(plan, sub)).join('')
+          : '<p class="muted small">No hay subsecciones.</p>'}
+      </div>
+    </div>
+  `;
+}
+}
+
+function renderSubtopic(plan, subtopic) {
+  const resCount = relatedResources(plan, 'subtopic', subtopic.id).length;
+  const icon = typeIcon(subtopic.type || 'topic');
+
+  return `
+    <div class="subtopic ${subtopic.completed ? 'done' : ''}">
+      <label class="check">
+        <input type="checkbox" data-action="toggle-subtopic" data-id="${subtopic.id}" ${subtopic.completed ? 'checked' : ''} />
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="small">${icon}</span>
+          <div>
+            <span style="text-decoration:${subtopic.completed ? 'line-through' : 'none'}">${escapeHtml(subtopic.title)}</span>
+            ${subtopic.url ? `<a href="${escapeHtml(subtopic.url)}" target="_blank" rel="noopener" class="muted small" style="margin-left:6px">🔗</a>` : ''}
+          </div>
+        </div>
+      </label>
+      <div class="row-actions compact">
+        ${subtopic.url ? `<button class="btn btn-ghost btn-sm" data-action="open-resource" data-url="${escapeHtml(subtopic.url)}">Abrir</button>` : `<button class="btn btn-soft btn-sm" data-action="add-resource" data-scope="subtopic:${subtopic.id}">+ Link</button>`}
+        <button class="btn btn-ghost btn-sm" data-action="view-resources" data-level="subtopic" data-id="${subtopic.id}" data-title="${escapeHtml(subtopic.title)}">🔗 ${resCount}</button>
+        <button class="btn btn-ghost btn-sm" data-action="edit-subtopic" data-id="${subtopic.id}">✏️</button>
+        <button class="btn btn-danger btn-sm" data-action="delete-subtopic" data-id="${subtopic.id}">🗑</button>
+      </div>
+    </div>
+  `;
+}
+/* ================= MATERIALES: AUXILIARES ================= */
+
+function groupResourcesByScope(plan) {
+  return {
+    plan: plan.resources.filter(r => r.scopeLevel === 'plan'),
+    archived: plan.resources.filter(r => r.archived)
+  };
+}
+
+function filterResources(resources, query, type) {
+  return resources.filter(r => {
+    const text = (r.title + ' ' + (r.tags || []).join(' ')).toLowerCase();
+    const matchesQuery = !query || text.includes(query.toLowerCase());
+    const matchesType = !type || type === 'all' || r.type === type;
+    return matchesQuery && matchesType;
+  });
+}
+
+function truncateUrl(url) {
+  try {
+    const u = new URL(url);
+    return u.hostname + u.pathname;
+  } catch {
+    return String(url).slice(0, 40);
+  }
+}
+
+function renderResourceList(plan, resources) {
+  if (!resources.length) return '';
+  return `
+    <div class="resource-list">
+      ${resources.map(resource => `
+        <div class="resource-card">
+          <div class="resource-card-head">
+            <span class="small">${typeIcon(resource.type)}</span>
+            <div>
+              <strong>${escapeHtml(resource.title)}</strong>
+              <div class="muted small">${escapeHtml(scopeLabel(plan, resource))}</div>
+              ${resource.url ? `<span class="muted small" style="display:block">🔗 ${escapeHtml(truncateUrl(resource.url))}</span>` : ''}
+            </div>
+          </div>
+          <div class="row-actions compact">
+            ${resource.url ? `<button class="btn btn-ghost btn-sm" data-action="open-resource" data-url="${escapeHtml(resource.url)}">Abrir</button>` : ''}
+            <button class="btn btn-ghost btn-sm" data-action="edit-resource" data-plan="${plan.id}" data-id="${resource.id}">✏️</button>
+            <button class="btn btn-danger btn-sm" data-action="delete-resource" data-plan="${plan.id}" data-id="${resource.id}">🗑</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+/* ================= RENDER: MATERIALES ================= */
+
+function renderMaterialView() {
+  const plan = contextPlan();
+  const container = document.getElementById('material-list');
+
+  if (!plan) {
+    container.innerHTML = `<div class="glass card empty"><h3>Sin plan seleccionado</h3><p>Selecciona un plan desde el dashboard.</p></div>`;
+    return;
+  }
+
+  const groups = groupResourcesByScope(plan);
+  const filtered = filterResources(groups.plan, materialUI.query, materialUI.type);
+
+  container.innerHTML = `
+    <div class="section-head" style="margin-bottom:18px">
+      <h2>Material de estudio</h2>
+      <div class="row-actions compact">
+        <input type="text" placeholder="Buscar material..." value="${escapeHtml(materialUI.query || '')}" data-action="set-query" style="max-width:180px" />
+        <select data-action="set-type" style="margin-left:8px">
+          <option value="all" ${!materialUI.type || materialUI.type === 'all' ? 'selected' : ''}>Todos los tipos</option>
+          <option value="pdf" ${materialUI.type === 'pdf' ? 'selected' : ''}>PDF</option>
+          <option value="youtube" ${materialUI.type === 'youtube' ? 'selected' : ''}>YouTube</option>
+          <option value="web" ${materialUI.type === 'web' ? 'selected' : ''}>Web</option>
+          <option value="video" ${materialUI.type === 'video' ? 'selected' : ''}>Video</option>
+        </select>
+        <span class="muted small" style="margin-left:auto">(${filtered.length}/${groups.plan.length} recursos)</span>
+        <button class="btn btn-soft btn-sm" data-action="add-resource" data-scope="plan:">+ Agregar</button>
+        <button class="btn btn-ghost btn-sm" data-view="planDash">← Panel del plan</button>
+      </div>
+    </div>
+    ${filtered.length ? renderResourceList(plan, filtered) : `
+      <div class="glass card empty">
+        <h3>Sin material todavía</h3>
+        <p>Agrega enlaces, archivos y notas desde el plan de estudio o desde aquí.</p>
+        <div class="row-actions" style="justify-content:center;margin-top:14px">
+          <button class="btn btn-accent" data-action="add-resource" data-scope="plan:">+ Agregar material</button>
+        </div>
+      </div>
+    `}
+  `;
+}
+/* ================= UTILIDADES DE UI: TOAST, MODAL, COPIAR ================= */
+
+function showToast(message, duration = 2600) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  clearTimeout(toastTimer);
+  toast.textContent = message;
+  toast.classList.add('show');
+  toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+function copyToClipboard(text, successMsg = 'Copiado') {
+  copyBuffer = text;
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(() => { fallbackCopy(text); showToast(successMsg); });
+  } else {
+    fallbackCopy(text);
+    showToast(successMsg);
+  }
+}
+
+function fallbackCopy(text) {
+  const el = document.createElement('textarea');
+  el.value = text;
+  document.body.appendChild(el);
+  el.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(el);
+}
+
+function openModal(content, { onClose = null } = {}) {
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  if (!overlay || !modal) return;
+  modal.innerHTML = content;
+  overlay.classList.remove('hidden');
+  modalContext = typeof onClose === 'function' ? onClose : null;
+  overlay.focus();
+}
+
+function closeModal() {
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  if (overlay) overlay.classList.add('hidden');
+  if (modal) modal.innerHTML = '';
+  const fn = modalContext;
+  modalContext = null;
+  if (typeof fn === 'function') fn();
+}
+
+/* ================= RENDER: EXÁMENES ================= */
+
+function renderExamsView() {
+  const plan = contextPlan();
+  const container = document.getElementById('exam-history');
+  const banner = document.getElementById('exams-banner');
+
+  if (!plan) {
+    if (banner) banner.innerHTML = '';
+    if (container) container.innerHTML = '<div class="glass card empty"><h3>Sin plan seleccionado</h3><p>Selecciona un plan desde el dashboard.</p></div>';
+    return;
+  }
+
+  if (banner) banner.innerHTML = plan.status === 'archived' ? archivedBanner(plan) : '';
+
+  const history = [...(plan.exams || [])].reverse();
+  const avg = plan.exams.length
+    ? Math.round(plan.exams.reduce((s, e) => s + e.percentage, 0) / plan.exams.length)
+    : 0;
+  const passed = plan.exams.filter(e => e.passed).length;
+  const lang = examLanguage();
+
+  container.innerHTML = `
+    <div class="section-head" style="margin-bottom:18px">
+      <h2>Exámenes de <span style="color:${plan.color || '#4ee1c1'}">${escapeHtml(plan.name)}</span></h2>
+      <div class="row-actions compact">
+        <span class="muted small">Promedio: ${avg}% · Aprobados: ${passed}/${plan.exams.length}</span>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:24px;margin-bottom:12px">
+      <h3>Nuevo examen</h3>
+      <div class="row-actions compact">
+        <button class="btn btn-accent btn-sm" data-action="exam" data-scope="plan" data-title="${escapeHtml(plan.name)}" data-plan="${plan.id}" data-count="${state.settings.planQuestions}">Examen general (${state.settings.planQuestions} preguntas)</button>
+        <button class="btn btn-ghost btn-sm" data-action="open-module-exam" data-plan="${plan.id}">Por módulo</button>
+        <button class="btn btn-ghost btn-sm" data-action="copy-exam-prompt" data-scope="plan" data-title="${escapeHtml(plan.name)}" data-plan="${plan.id}">Copiar prompt completo</button>
+      </div>
+    </div>
+
+    <div class="exam-blueprints">
+      <h3>Simular examen certificación</h3>
+      <p class="muted small">Genera preguntas simuladas basadas en un blueprint oficial.</p>
+      <div class="exam-grid">
+        ${EXAM_BLUEPRINTS.map((bp, i) => `<button class="glass card exam-blueprint" data-action="simulate-exam" data-bp-index="${i}" data-plan="${plan.id}" data-scope="plan" data-title="${escapeHtml(bp.name)}" data-count="${EXAM_OPTIONS.plan[0]}">
+          <div class="exam-bp-head">
+            <span class="badge">📋</span>
+            <strong>${escapeHtml(bp.name)}</strong>
+          </div>
+          <p class="muted small">${escapeHtml(bp.source || '')}</p>
+          <span class="badge badge-success">Simulacro</span>
+        </button>`).join('')}
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:28px;margin-bottom:12px">
+      <h3>Historial (${plan.exams.length})</h3>
+    </div>
+    ${history.length ? history.map(exam => `
+      <div class="glass card exam-history-item">
+        <div class="section-head">
+          <div>
+            <h4>${escapeHtml(exam.title)}</h4>
+            <div class="muted small">${new Date(exam.createdAt).toLocaleString(lang === 'es' ? 'es-ES' : 'en-US')} · ${escapeHtml(exam.scope || 'general')} · ${exam.count} preguntas</div>
+          </div>
+          <span class="badge ${exam.passed ? 'badge-success' : 'badge-danger'}">${exam.percentage}% ${exam.passed ? '✓' : '✗'}</span>
+        </div>
+        <div class="progress"><span style="width:${exam.percentage}%"></span></div>
+        ${exam.questions && exam.questions.length ? `
+          <div class="exam-review" style="margin-top:12px">
+            ${exam.questions.map((q, i) => `
+              <div class="exam-review-item ${q.correct ? 'correct' : 'wrong'}">
+                <small class="muted">#${i + 1} ${escapeHtml(q.question)}</small>
+                <div class="muted small">${q.correct ? '✓ Correcta' : '✗ Revisar'} · ${escapeHtml(q.subtopic || '')}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+        <div class="row-actions" style="margin-top:12px">
+          <button class="btn btn-ghost btn-sm" data-action="retake-exam" data-id="${exam.id}" data-plan="${plan.id}">Repetir</button>
+        </div>
+      </div>
+    `).join('') : '<p class="muted small">Aún no has realizado exámenes.</p>'}
+  `;
+}
+
+/* ================= RENDER: ARCHIVO ================= */
+
+function renderArchiveView() {
+  const container = document.getElementById('archive-grid');
+  if (!container) return;
+  const archived = archivedPlans();
+
+  container.innerHTML = `
+    ${archived.length ? archived.map(plan => `
+      <article class="glass plan-card" style="--accent:${plan.color || '#6aa9ff'}" data-plan="${plan.id}">
+        <div class="plan-card-head">
+          <div class="plan-avatar">${escapeHtml(initials(plan.name))}</div>
+          <div class="plan-meta">
+            <h3>${escapeHtml(plan.name)}</h3>
+            <p>${escapeHtml(plan.certification || 'Plan archivado')}</p>
+          </div>
+          <span class="badge">${plan.completedAt ? '🎓 Completado' : '📦 Archivado'}</span>
+        </div>
+        ${plan.description ? `<p class="muted small" style="margin-top:10px">${escapeHtml(plan.description.slice(0, 120))}${plan.description.length > 120 ? '…' : ''}</p>` : ''}
+        <div class="plan-actions">
+          <button class="btn btn-soft btn-sm" data-action="restore-plan" data-plan="${plan.id}">Restaurar</button>
+          <button class="btn btn-ghost btn-sm" data-action="open-plan" data-plan="${plan.id}">Ver panel</button>
+          <button class="btn btn-ghost btn-sm" data-view="dashboard">→ Dashboard</button>
+        </div>
+      </article>
+    `).join('') : `
+      <div class="glass card empty" style="grid-column:1/-1">
+        <h3>No hay planes archivados</h3>
+        <p>Los planes archivados o completados aparecen aquí.</p>
+        <div class="row-actions" style="justify-content:center;margin-top:14px">
+          <button class="btn btn-ghost" data-view="dashboard">← Dashboard</button>
+        </div>
+      </div>
+    `}
+  `;
+}
+
+/* ================= RENDER: AJUSTES ================= */
+
+function renderSettingsView() {
+  syncSettingsInputs();
+  toggleSearchFields();
+}
+
+function syncSettingsInputs() {
+  const s = state.settings;
+  const $ = id => document.getElementById(id);
+  if ($('theme')) $('theme').value = s.theme || 'dark';
+  if ($('ui-language')) $('ui-language').value = s.uiLanguage || 'es';
+  if ($('content-primary')) $('content-primary').value = s.contentPrimary || 'es';
+  if ($('content-secondary')) $('content-secondary').value = s.contentSecondary || 'none';
+  if ($('exam-language-mode')) $('exam-language-mode').value = s.examLanguageMode || 'ui';
+  if ($('search-provider')) $('search-provider').value = s.searchProvider || 'google-links';
+  if ($('ai-provider')) $('ai-provider').value = s.aiProvider || 'none';
+  if ($('ai-model')) $('ai-model').value = s.aiModel || '';
+  if ($('ai-base-url')) $('ai-base-url').value = s.aiBaseUrl || '';
+  if ($('pass-score')) $('pass-score').value = s.passScore ?? 70;
+  if ($('auto-offer')) $('auto-offer').checked = !!s.autoOfferExam;
+  if ($('subsection-questions')) $('subsection-questions').value = s.subsectionQuestions ?? 10;
+  if ($('chapter-questions')) $('chapter-questions').value = s.chapterQuestions ?? 20;
+  if ($('plan-questions')) $('plan-questions').value = s.planQuestions ?? 30;
+  const summary = document.getElementById('language-summary');
+  if (summary) summary.innerHTML = `Idioma de interfaz: <strong>${langLabel(s.uiLanguage)}</strong> · Contenido principal: <strong>${langLabel(s.contentPrimary)}</strong>`;
+}
+
+function toggleSearchFields() {
+  const provider = state.settings.searchProvider || 'google-links';
+  const cse = document.getElementById('google-cse-fields');
+  const serp = document.getElementById('serpapi-fields');
+  const notice = document.getElementById('search-provider-notice');
+  if (cse) cse.style.display = provider === 'google-cse' ? 'grid' : 'none';
+  if (serp) serp.style.display = provider === 'serpapi' ? 'grid' : 'none';
+  if (notice) notice.textContent = provider === 'google-links'
+    ? 'Google directo abre resultados en una pestaña nueva (sin necesidad de API).'
+    : provider === 'google-cse' ? 'Configura tu Google API Key y Search Engine ID.'
+    : 'Configura tu clave de SerpApi.';
+}
+
+/* ================= CRUD: RECURSOS, MÓDULOS, CAPÍTULOS ================= */
+
+function scopeLabel(plan, scope) {
+  if (!scope) return 'Plan completo';
+  if (scope.level === 'module') return 'Módulo: ' + (findModule(plan, scope.id) || {}).title || ' — ';
+  if (scope.level === 'topic') return 'Tema: ' + (findTopicRef(plan, scope.id) || {}).title || ' — ';
+  if (scope.level === 'chapter') return 'Capítulo (raíz del plan)';
+  if (scope.level === 'subtopic') return 'Subtema';
+  return 'Plan completo';
+}
+
+function parseScope(scope) {
+  if (!scope) return { level: 'plan', id: null };
+  const parts = String(scope).split(':');
+  return { level: parts[0] || 'plan', id: parts[1] || null };
+}
+
+function addResourceModal() {
+  const scope = parseScope(event.target.dataset.scope);
+  const plan = contextPlan();
+  if (!plan) return showToast('Selecciona un plan primero');
+
+  openModal(`
+    <div class="modal-card">
+      <h3>Agregar material de estudio</h3>
+      <p class="muted small">Ámbito: <strong>${scopeLabel(plan, scope)}</strong></p>
+      <form id="resource-form" style="margin-top:14px">
+        <div class="field"><label for="res-title">Título</label><input id="res-title" required /></div>
+        <div class="field"><label for="res-url">URL / archivo</label><input id="res-url" placeholder="https://..." /></div>
+        <div class="field"><label for="res-type">Tipo</label><select id="res-type">
+          <option value="auto">Auto (detectar)</option><option value="web">Web</option><option value="pdf">PDF</option>
+          <option value="youtube">YouTube</option><option value="video">Video</option><option value="other">Otro</option>
+        </select></div>
+        <div class="field"><label for="res-lang">Idioma</label><select id="res-lang">
+          <option value="es">Español</option><option value="en">English</option>
+        </select></div>
+        <div class="field"><label for="res-tags">Tags (coma)</label><input id="res-tags" placeholder="oficial, repaso" /></div>
+        <div class="field"><label for="res-notes">Notas</label><textarea id="res-notes" rows="2"></textarea></div>
+        <div class="row-actions" style="margin-top:18px">
+          <button type="submit" class="btn btn-accent">Guardar</button>
+          <button type="button" class="btn btn-ghost" data-action="close-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  `, { onClose: () => { const f = document.getElementById('resource-form'); if (f) f.onsubmit = null; } });
+
+  const form = document.getElementById('resource-form');
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    addResource(plan, scope, {
+      title: document.getElementById('res-title').value.trim(),
+      url: document.getElementById('res-url').value.trim(),
+      type: document.getElementById('res-type').value,
+      language: document.getElementById('res-lang').value,
+      tags: document.getElementById('res-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+      notes: document.getElementById('res-notes').value.trim()
+    });
+    closeModal();
+    showToast('Material agregado');
+    if (state.view === 'material') renderMaterialView();
+    else if (state.view === 'exams') renderExamsView();
+  };
+}
+
+function addResource(plan, scope, data) {
+  if (!plan) return;
+  plan.resources.push({
+    id: uid('res'), createdAt: Date.now(), updated: Date.now(), downloaded: false, favorite: false,
+    scopeLevel: scope.level, scopeId: scope.id,
+    title: data.title || (data.url ? hostname(data.url) : 'Sin título'),
+    url: data.url || '',
+    type: data.type === 'auto' ? detectResourceType(data.url) : (data.type || 'web'),
+    language: data.language || state.settings.contentPrimary,
+    tags: data.tags || [], notes: data.notes || ''
+  });
+  save();
+}
+
+function addSubtopic(plan, topicId, title) {
+  if (!plan) return;
+  const topic = findTopicRef(plan, topicId);
+  if (!topic) return showToast('Tema no encontrado');
+  topic.subtopics.push({ id: uid('sub'), title: title || 'Nuevo subtema', completed: false });
+  save();
+  if (state.view === 'plan') renderCurriculumView();
+}
+
+function addModule(plan, title, description, source) {
+  if (!plan) return;
+  plan.modules.push({
+    id: uid('mod'), title: title || 'Nuevo módulo', description: description || '',
+    source: source || plan.source || '', topics: []
+  });
+  save();
+  if (state.view === 'plan') renderCurriculumView();
+}
+
+function addChapter(plan, moduleId, title, description) {
+  if (!plan) return;
+  const module = findModule(plan, moduleId);
+  if (!module) return showToast('Módulo no encontrado');
+  module.topics.push({
+    id: uid('topic'), title: title || 'Nuevo capítulo', description: description || '', subtopics: []
+  });
+  save();
+  if (state.view === 'plan') renderCurriculumView();
+}
+
+function editResourceModal(resourceId, planId) {
+  const plan = getPlan(planId) || contextPlan();
+  const resource = findResource(plan, resourceId);
+  if (!resource) return showToast('Recurso no encontrado');
+  openModal(`
+    <div class="modal-card">
+      <h3>Editar material</h3>
+      <form id="edit-resource-form" style="margin-top:14px">
+        <div class="field"><label for="er-title">Título</label><input id="er-title" value="${escapeHtml(resource.title)}" /></div>
+        <div class="field"><label for="er-url">URL / archivo</label><input id="er-url" value="${escapeHtml(resource.url || '')}" placeholder="https://..." /></div>
+        <div class="field"><label for="er-type">Tipo</label><select id="er-type">
+          <option value="auto" ${!resource.type || resource.type === 'auto' ? 'selected' : ''}>Auto (detectar)</option>
+          <option value="web" ${resource.type === 'web' ? 'selected' : ''}>Web</option>
+          <option value="pdf" ${resource.type === 'pdf' ? 'selected' : ''}>PDF</option>
+          <option value="youtube" ${resource.type === 'youtube' ? 'selected' : ''}>YouTube</option>
+          <option value="video" ${resource.type === 'video' ? 'selected' : ''}>Video</option>
+          <option value="other" ${resource.type === 'other' ? 'selected' : ''}>Otro</option>
+        </select></div>
+        <div class="field"><label for="er-lang">Idioma</label><select id="er-lang">
+          <option value="es" ${resource.language === 'es' ? 'selected' : ''}>Español</option>
+          <option value="en" ${resource.language === 'en' ? 'selected' : ''}>English</option>
+        </select></div>
+        <div class="field"><label for="er-tags">Tags</label><input id="er-tags" value="${escapeHtml((resource.tags || []).join(', '))}" /></div>
+        <div class="field"><label for="er-notes">Notas</label><textarea id="er-notes" rows="2">${escapeHtml(resource.notes || '')}</textarea></div>
+        <div class="row-actions" style="margin-top:18px">
+          <button type="submit" class="btn btn-accent">Guardar</button>
+          <button type="button" class="btn btn-ghost" data-action="close-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  `, { onClose: () => {} });
+  document.getElementById('edit-resource-form').onsubmit = (e) => {
+    e.preventDefault();
+    editResource(resource.id, {
+      title: document.getElementById('er-title').value.trim(),
+      url: document.getElementById('er-url').value.trim(),
+      type: document.getElementById('er-type').value,
+      language: document.getElementById('er-lang').value,
+      tags: document.getElementById('er-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+      notes: document.getElementById('er-notes').value.trim()
+    });
+    closeModal();
+    showToast('Material actualizado');
+    if (state.view === 'material') renderMaterialView();
+    else if (state.view === 'exams') renderExamsView();
+  };
+}
+
+function editResource(id, data) {
+  if (!id) return;
+  const plan = contextPlan();
+  if (!plan) return;
+  const r = findResource(plan, id);
+  if (!r) return;
+  r.title = data.title || r.title;
+  r.url = data.url;
+  r.type = data.type === 'auto' ? detectResourceType(data.url) : (data.type || r.type);
+  r.language = data.language || r.language;
+  r.tags = data.tags;
+  r.notes = data.notes || '';
+  r.updated = Date.now();
+  save();
+}
+
+function editPlanInfo(planId) {
+  const plan = getPlan(planId) || contextPlan();
+  if (!plan) return showToast('Plan no encontrado');
+  openModal(`
+    <div class="modal-card">
+      <h3>Editar información del plan</h3>
+      <form id="edit-plan-form" style="margin-top:14px">
+        <div class="field"><label for="ep-name">Nombre</label><input id="ep-name" value="${escapeHtml(plan.name)}" required /></div>
+        <div class="field"><label for="ep-cert">Certificación</label><input id="ep-cert" value="${escapeHtml(plan.certification || '')}" /></div>
+        <div class="field"><label for="ep-desc">Descripción</label><input id="ep-desc" value="${escapeHtml(plan.description || '')}" /></div>
+        <div class="field"><label for="ep-details">Detalles</label><textarea id="ep-details" rows="3">${escapeHtml(plan.details || '')}</textarea></div>
+        <div class="field"><label for="ep-date">Fecha del examen</label><input id="ep-date" type="date" value="${escapeHtml(plan.examDate || '')}" /></div>
+        <div class="row-actions" style="margin-top:18px">
+          <button type="submit" class="btn btn-accent">Guardar</button>
+          <button type="button" class="btn btn-ghost" data-action="close-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  `, { onClose: () => {} });
+  document.getElementById('edit-plan-form').onsubmit = (e) => {
+    e.preventDefault();
+    editPlanInfoSave(plan.id, {
+      name: document.getElementById('ep-name').value.trim(),
+      certification: document.getElementById('ep-cert').value.trim(),
+      description: document.getElementById('ep-desc').value.trim(),
+      details: document.getElementById('ep-details').value.trim(),
+      examDate: document.getElementById('ep-date').value
+    });
+    closeModal();
+    showToast('Información actualizada');
+    renderAll();
+  };
+}
+
+function editPlanInfoSave(id, data) {
+  const plan = getPlan(id);
+  if (!plan) return;
+  plan.name = data.name || plan.name;
+  plan.certification = data.certification || '';
+  plan.description = data.description || '';
+  plan.details = data.details || '';
+  plan.examDate = data.examDate || '';
+  if (plan.certification) {
+    const bp = EXAM_BLUEPRINTS.find(b => b.match.test(plan.certification));
+    if (bp) { if (!plan.source) plan.source = bp.source; }
+  }
+  save();
+}
+
+function editSubtopic(subtopicId, title) {
+  if (!subtopicId) return;
+  const plan = contextPlan();
+  if (!plan) return;
+  let target = null;
+  for (const mod of plan.modules) {
+    for (const topic of mod.topics) {
+      const st = topic.subtopics.find(s => s.id === subtopicId);
+      if (st) { target = st; break; }
+    }
+    if (target) break;
+  }
+  if (!target) return showToast('Subtema no encontrado');
+  target.title = title || target.title;
+  target.updated = Date.now();
+  save();
+  if (state.view === 'plan') renderCurriculumView();
+}
+
+function viewResources(scope, type) {
+  const plan = contextPlan();
+  if (!plan) return;
+  const scopeId = scope.id;
+  let list = plan.resources;
+  if (scopeId) {
+    const ref = scope.level === 'chapter' ? findTopicRef(plan, scopeId) : findModule(plan, scopeId);
+    if (ref && ref.resources) list = ref.resources;
+  }
+  const filtered = filterResources(list, type);
+  renderResourceList(filtered, scope.id || null);
+}
+
+function googleSearch(query) {
+  const provider = state.settings.searchProvider || 'google-links';
+  if (provider === 'google-links') {
+    window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
+    return;
+  }
+  if (provider === 'google-cse') {
+    const cse = state.settings.googleCse || '';
+    const key = state.settings.googleCseKey || '';
+    if (cse && key) {
+      window.open('https://www.googleapis.com/customsearch/v1?key=' + key + '&cx=' + cse + '&q=' + encodeURIComponent(query), '_blank');
+      return;
+    }
+    showToast('Configura tu clave API y Search Engine ID en Ajustes.');
+  }
+  if (provider === 'serpapi') {
+    const api = state.settings.serpapi || '';
+    if (api) {
+      window.open('https://serpapi.com/search?q=' + encodeURIComponent(query) + '&api_key=' + api, '_blank');
+      return;
+    }
+    showToast('Configura tu API key de SerpApi en Ajustes.');
+  }
+}
+
+function addToCalendar(plan) {
+  if (!plan.examDate) {
+    showToast('Este plan no tiene fecha de examen registrada.');
+    return;
+  }
+  const title = encodeURIComponent('Examen: ' + plan.name + ' - ' + plan.certification);
+  const dt = encodeURIComponent(plan.examDate);
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dt}/${dt}&details=${encodeURIComponent(plan.description || '')}`;
+  window.open(url, '_blank');
+  showToast('Invitación de calendario abierta.');
+}
+
+function saveExamNote(examId, planId) {
+  const plan = getPlan(planId) || contextPlan();
+  if (!plan) return;
+  const exam = plan.exams.find(e => e.id === examId);
+  if (!exam) return;
+  openModal(`
+    <div class="modal-card">
+      <h3>Notas del examen</h3>
+      <form id="exam-note-form" style="margin-top:14px">
+        <div class="field"><label for="en-text">Notas / resumen</label><textarea id="en-text" rows="5" placeholder="Resume lo más importante...">${escapeHtml(exam.notes || '')}</textarea></div>
+        <div class="row-actions" style="margin-top:18px">
+          <button type="submit" class="btn btn-accent">Guardar</button>
+          <button type="button" class="btn btn-ghost" data-action="close-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  `, { onClose: () => {} });
+  document.getElementById('exam-note-form').onsubmit = (e) => {
+    e.preventDefault();
+    exam.notes = document.getElementById('en-text').value.trim();
+    save();
+    closeModal();
+    showToast('Notas guardadas');
+  };
+}
+
+function deleteResource(id) {
+  if (!confirm('Eliminar este material?')) return;
+  const plan = contextPlan();
+  if (!plan) return;
+  plan.resources = plan.resources.filter(r => r.id !== id);
+  save();
+  if (state.view === 'material') renderMaterialView();
+  else if (state.view === 'exams') renderExamsView();
+  showToast('Material eliminado');
+}
+
+function deleteSubtopic(subtopicId) {
+  if (!confirm('Eliminar este subtema? Se perderán los temas anidados.')) return;
+  const plan = contextPlan();
+  if (!plan) return;
+  for (const mod of plan.modules) {
+    for (const topic of mod.topics) {
+      topic.subtopics = topic.subtopics.filter(s => s.id !== subtopicId);
+    }
+  }
+  save();
+  if (state.view === 'plan') renderCurriculumView();
+  showToast('Subtema eliminado');
+}
+
+function deleteChapter(moduleId, chapterId) {
+  if (!confirm('Eliminar este capítulo? Se perderán los temas y recursos.')) return;
+  const plan = contextPlan();
+  if (!plan) return;
+  const mod = findModule(plan, moduleId);
+  if (mod) {
+    mod.topics = mod.topics.filter(t => t.id !== chapterId);
+    save();
+    if (state.view === 'plan') renderCurriculumView();
+  }
+  showToast('Capítulo eliminado');
+}
+
+function deleteModule(moduleId) {
+  if (!confirm('Eliminar este módulo? Se perderán los capítulos.')) return;
+  const plan = contextPlan();
+  if (!plan) return;
+  plan.modules = plan.modules.filter(m => m.id !== moduleId);
+  save();
+  if (state.view === 'plan') renderCurriculumView();
+  showToast('Módulo eliminado');
+}
+
+function deletePlan(planId) {
+  if (!confirm('Eliminar este plan de forma permanente?')) return;
+  if (!confirm('¿Seguro? Esto no se puede deshacer.')) return;
+  const plan = getPlan(planId);
+  if (!plan) return;
+  if (planId === state.currentPlanId) {
+    state.currentPlanId = planId === 0 ? null : state.currentPlanId;
+    state.view = 'dashboard';
+  }
+  removePlan(planId);
+  save();
+  renderAll();
+  showToast('Plan eliminado');
+}
+
+function archivePlan(planId) {
+  const plan = getPlan(planId);
+  if (!plan) return;
+  if (!confirm('Archivar este plan? Se pierden los exámenes asociados.')) return;
+  plan.status = 'archived';
+  plan.archivedAt = plan.status === 'archived' ? Date.now() : '';
+  if (plan.status === 'archived') {
+    plan.archiveTimestamp = plan.archivedAt;
+    plan.completed = true;
+  }
+  save();
+  renderAll();
+  showToast('Plan archivado');
+}
+
+function restorePlan(planId) {
+  const plan = getPlan(planId);
+  if (!plan) return;
+  plan.status = 'active';
+  if (plan.archiveTimestamp) {
+    const now = Date.now();
+    plan.archiveTimestamp = Math.max(plan.archiveTimestamp - 1, 0);
+    plan.restoredAt = plan.archiveTimestamp;
+  }
+  plan.completed = false;
+  save();
+  renderAll();
+  showToast('Plan restaurado');
+}
+
+function completeAndArchive(plan) {
+  plan.completed = true;
+  plan.archivedAt = Date.now();
+  if (!plan.archiveTimestamp) {
+    plan.archiveTimestamp = plan.archivedAt;
+    plan.status = 'completed';
+  }
+  save();
+  renderAll();
+  showToast('Plan completado y archivado');
+}
+
+function openPlan(planId, from = 'view') {
+  const plan = getPlan(planId);
+  if (!plan) return;
+  state.currentPlanId = planId;
+  state.view = 'plan';
+  if (from === 'archive') renderArchiveView();
+  else renderCurriculumView();
+}
+
+function openResource(resourceId, planId) {
+  const plan = getPlan(planId) || contextPlan();
+  if (!plan) return;
+  const r = findResource(plan, resourceId);
+  if (!r) return showToast('Recurso no encontrado');
+  r.downloaded = true;
+  save();
+  state.view = 'resource';
+  if (state.view !== 'material') {
+    state.view = 'resource';
+    renderResourceView(r, plan);
+  } else {
+    renderMaterialView();
+  }
+  showToast('Material abierto');
+}
+
+function simulateExamInline(plan, { scope, count }) {
+  const total = Math.min(count || 0, state.settings.planQuestions) || 10;
+  const source = [];
+  const seen = new Set();
+  for (const mod of plan.modules) {
+    for (const topic of mod.topics) {
+      const st = topic.subtopics || [];
+      if (seen.has(topic.id)) continue;
+      seen.add(topic.id);
+      const picks = Math.max(1, Math.round(total / (plan.modules.length * 3)));
+      for (const sub of st) {
+        if (source.length >= total) break;
+        if (seen.has(sub.id)) continue;
+        seen.add(sub.id);
+        source.push({ subtopic: sub.id, topic: topic.id, title: topic.title, scopeLevel: 'topic' });
+      }
+      if (source.length >= total) break;
+    }
+    if (source.length >= total) break;
+  }
+  const questions = generateQuestions(window.ml, plan, { scope: scope || null, count: total });
+  const exam = {
+    id: uid('exam'),
+    planId: plan.id,
+    title: plan.certification || plan.name,
+    scope: scope || 'general',
+    count: questions ? questions.length : total,
+    questions: questions || [],
+    percentage: 0,
+    passed: false,
+    notes: '',
+    answers: [],
+    createdAt: Date.now()
+  };
+  return exam;
+}
+
+function showExamResults(examId, planId) {
+  const plan = getPlan(planId) || contextPlan();
+  if (!plan) return;
+  const exam = plan.exams.find(e => e.id === examId);
+  if (!exam) return showToast('Examen no encontrado');
+  const total = exam.questions ? exam.questions.length : exam.count || 0;
+  const correct = exam.answers ? exam.answers.filter(a => a.correct).length : 0;
+  const percentage = total ? Math.round((correct / total) * 100) : 0;
+  const passed = percentage >= (plan.passScore || 70);
+  const lang = examLanguage();
+  exam.percentage = percentage;
+  exam.passed = passed;
+  const answerMap = new Map();
+  exam.answers.forEach(a => answerMap.set(a.questionId, a));
+  const review = exam.questions.map((q, i) => {
+    const answer = answerMap.get(q.id || q.question);
+    const isCorrect = !!(answer && answer.correct);
+    return {
+      index: i,
+      question: q.question,
+      user: answerMap.get(q.id)?.answer || '',
+      correctAnswer: q.correct || q.correctAnswer,
+      explanation: q.explanation || q.exp,
+      correct: isCorrect
+    };
+  });
+  const altLang = examLanguage() === 'es' ? 'en' : 'es';
+  const title = passed ? '¡Aprobado!' : 'Revisión';
+  openModal(`
+    <div class="modal-card exam-results">
+      <div class="section-head" style="margin-bottom:12px">
+        <h3>${title}</h3>
+        <div class="row" style="justify-content:center">
+          <span class="badge ${passed ? 'badge-success' : 'badge-danger'}">${percentage}%</span>
+          <span class="muted small">${correct}/${total} correctas</span>
+        </div>
+      </div>
+      <div class="progress" style="margin-bottom:16px"><span style="width:${percentage}%"></span></div>
+      <div class="exam-review" style="max-height:320px;overflow:auto">
+        ${review.map(r => `
+          <div class="exam-review-item ${r.correct ? 'correct' : 'wrong'}">
+            <div class="muted small">#${r.index + 1} ${escapeHtml(r.question)}</div>
+            <div class="row-actions compact" style="margin-top:4px">
+              <span class="muted small">Su: ${escapeHtml(r.user)}</span>
+              <span class="muted small">Correcta: ${escapeHtml(r.correctAnswer)}</span>
+            </div>
+            ${r.correct ? '' : `<div class="muted small" style="margin-top:6px">${escapeHtml(r.explanation)}</div>`}
+          </div>
+        `).join('')}
+      </div>
+      <div class="row-actions" style="justify-content:center;margin-top:18px">
+        <button class="btn btn-ghost" data-action="retake-exam" data-id="${examId}" data-plan="${planId}">Repetir examen</button>
+      </div>
+    </div>
+  `, { onClose: () => { if (planId) renderAll(); } });
+}
+
+function retakeExam(examId, planId) {
+  const exam = contextPlan().exams.find(e => e.id === examId);
+  if (!exam) return;
+  simulateExam(exam.planId, { scope: exam.scope || null, count: exam.count }).then(newExam => {
+    exam.id = newExam.id;
+    exam.questions = newExam.questions;
+    exam.answers = newExam.answers;
+    exam.percentage = newExam.percentage;
+    exam.passed = newExam.passed;
+    exam.createdAt = Date.now();
+    save();
+    renderAll();
+    showExamResults(newExam.id, planId);
+  }).catch(err => { console.error(err); showToast('Error al repetir examen'); });
+}
+
+function startExam(scope) {
+  const plan = contextPlan();
+  if (!plan) return showToast('No hay plan seleccionado.');
+  if (plan.exams.length && Date.now() - plan.lastExamTime < 60000) {
+    showToast('Espera un momento entre examenes.');
+    return;
+  }
+  const total = state.settings.planQuestions;
+  simulateExam(plan, { scope: scope || null, count: total }).then(exam => {
+    plan.lastExamTime = Date.now();
+    plan.exams.push(exam);
+    save();
+    renderAll();
+    showExamResults(exam.id, plan.id);
+  }).catch(err => {
+    console.error(err);
+    showToast('No se pudo generar el examen.');
+  });
+}
+
+
+
+/* ================= EXAM QUESTION GENERATION ================= */
+function generateQuestions(ml, plan, { scope, count } = {}) {
+  const n = Math.max(1, Math.min(count || 10, state.settings.planQuestions || 20));
+  const questions = [];
+  const seenSub = new Set();
+  const candidates = [];
+  for (const mod of plan.modules || []) {
+    for (const topic of mod.topics || []) {
+      for (const sub of topic.subtopics || []) {
+        if (seenSub.has(sub.id)) continue;
+        seenSub.add(sub.id);
+        candidates.push({ mod, topic, sub });
+      }
+    }
+  }
+  candidates.sort((a, b) => (a.sub.id || '').localeCompare(b.sub.id || ''));
+  const picks = candidates.slice(0, n);
+  for (const { mod, topic, sub } of picks) {
+    const qid = uid('q');
+    const title = escapeHtml(sub.title || sub.name || 'este tema');
+    const ttitle = escapeHtml(topic.title || '');
+    const mtitle = escapeHtml(mod.title || '');
+    questions.push({
+      id: qid,
+      question: '¿En qué consiste "' + title + '"?',
+      correct: title,
+      correctAnswer: title,
+      explanation: 'Pertenece al tema "' + ttitle + '" del módulo "' + mtitle + '".',
+      options: [title, 'Concepto de ' + ttitle, 'Aspecto de ' + mtitle, 'Ninguna de las anteriores']
+    });
+  }
+  return questions;
+}
+
+function simulateExam(planId, opts = {}) {
+  return new Promise((resolve, reject) => {
+    try {
+      const plan = getPlan(planId) || contextPlan();
+      if (!plan) return reject(new Error('No hay plan seleccionado.'));
+      const total = Math.max(1, Math.min(opts.count || state.settings.planQuestions || 10, state.settings.planQuestions || 20));
+      const exam = simulateExamInline(plan, { scope: opts.scope || null, count: total });
+      resolve(exam);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+function renderAll() {
+  if (typeof renderPlanDash === 'function') renderPlanDash();
+}
+
+/* ================= NAVIGATION & UI ================= */
+function switchView(viewId) {
+  document.querySelectorAll('[data-view], section[id]').forEach(function (el) {
+    const isActive = el.id === viewId || el.dataset.view === viewId;
+    el.style.display = isActive ? '' : 'none';
+  });
+  renderTopbar();
+  renderBreadcrumb(viewId);
+}
+
+function renderTopbar() {
+  const plan = contextPlan();
+  var el = document.getElementById('topbar-plan') || document.getElementById('current-plan');
+  if (el) el.textContent = plan ? (plan.name || plan.certification || 'Plan') : 'Sin plan';
+}
+
+function renderBreadcrumb(active) {
+  var el = document.getElementById('breadcrumb');
+  if (!el) return;
+  var plan = contextPlan();
+  var html = plan ? 'Plan: ' + escapeHtml(plan.name || '') : 'Sin plan';
+  if (active) html += ' > ' + escapeHtml(active);
+  el.innerHTML = html;
+}
+
+function toggleChapter(moduleId) {
+  var el = document.getElementById('module-' + moduleId) || document.getElementById(moduleId);
+  if (el) el.classList.toggle('collapsed');
+}
+
+function toggleSubtopic(topicId) {
+  var el = document.getElementById('topic-' + topicId) || document.getElementById(topicId);
+  if (el) el.classList.toggle('collapsed');
+}
+
+function setupEventListeners() {
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-action],[data-view]');
+    if (!btn) return;
+    var view = btn.dataset.view;
+    if (view) { try { switchView(view); } catch (err) { showToast('Vista no disponible: ' + view); } return; }
+    var action = btn.dataset.action;
+    try {
+      switch (action) {
+        case 'exam':
+        case 'start-exam':
+        case 'simulate-exam': startExam(btn.dataset.scope || null); break;
+        case 'retake-exam': retakeExam(btn.dataset.id, btn.dataset.plan); break;
+        case 'toggle-exam-result': toggleExamResult(btn.dataset.id); break;
+        case 'delete-exam-result': deleteExamResult(btn.dataset.id); break;
+        case 'copy-exam-prompt': copyExamPrompt(btn.dataset.id); break;
+        case 'open-plan': openPlan(btn.dataset.plan || btn.dataset.id); break;
+        case 'open-resource': openResource(btn.dataset.id || btn.dataset.plan); break;
+        case 'archive-plan': archivePlan(btn.dataset.plan); break;
+        case 'restore-plan': restorePlan(btn.dataset.plan); break;
+        case 'complete-plan': completeAndArchive(contextPlan()); break;
+        case 'delete-plan': deletePlan(btn.dataset.plan); break;
+        case 'edit-plan':
+        case 'edit-plan-info': editPlanInfo(btn.dataset.plan); break;
+        case 'delete-resource': deleteResource(btn.dataset.id); break;
+        case 'edit-resource': editResourceModal(btn.dataset.id); break;
+        case 'view-resources': viewResources(); break;
+        case 'google-search': googleSearch(); break;
+        case 'close-modal': closeModal(); break;
+        case 'toggle-chapter': toggleChapter(btn.dataset.module || btn.dataset.id); break;
+        case 'toggle-subtopic': toggleSubtopic(btn.dataset.topic || btn.dataset.id); break;
+        default: showToast('Acción pendiente: ' + action); break;
+      }
+    } catch (err) { console.error(err); showToast('Error: ' + action); }
+  });
+}
+
+function initApp() {
+  setupEventListeners();
+  renderAll();
+  if (typeof syncSettingsInputs === 'function') syncSettingsInputs();
+}
+
+/* ================= EXAM RESULT ACTIONS ================= */
+function toggleExamResult(examId) {
+  var el = document.getElementById('exam-result-' + examId);
+  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+function deleteExamResult(examId) {
+  var plan = contextPlan();
+  if (!plan) return;
+  plan.exams = (plan.exams || []).filter(function (e) { return e.id !== examId; });
+  save();
+  renderAll();
+  showToast('Resultado de examen eliminado');
+}
+
+function copyExamPrompt(examId) {
+  var plan = contextPlan();
+  if (!plan) return;
+  var exam = (plan.exams || []).find(function (e) { return e.id === examId; });
+  if (!exam) return;
+  var text = 'Examen: ' + exam.title + '\nÁmbito: ' + exam.scope + '\nPreguntas: ' + exam.count + '\n';
+  copyToClipboard(text).then(function () { showToast('Prompt copiado al portapapeles'); }).catch(function () { showToast('No se pudo copiar'); });
+}
+
+initApp();
+</script>
+</body>
+</html>
